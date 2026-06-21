@@ -1,793 +1,835 @@
-		
-		const imagePath = (file) => `/assets/images/${file}`;
-		const audioPath = (file) => `/assets/audio/${file}`;
+const imagePath = (file) => `/assets/images/${file}`;
+const audioPath = (file) => `/assets/audio/${file}`;
 
-		/*adm value*/
-		const wrap = document.getElementById('wrap');
-		const cheatBtn = document.getElementById('cheat_modal_open');
-		const closeCheat = document.getElementById('close_cheat');
-		const cheatModal = document.getElementById('modal_cheat');
-		const cheatInp = document.getElementById('cheatInp');
-		const cheatApp = document.getElementById('cheatApp');
-		cheatBtn.addEventListener('click', openCheatModal);
-		let cheater = false;
-		function openCheatModal() {
-			cheatModal.style.display = 'flex';
-			wrap.style.filter = 'blur(10px) grayscale(3)';
-			closeStatModal();
-			cheatInp.value = '';
-		}
-		cheatApp.addEventListener('click', isThatCheat);
-		function isThatCheat(){
-			if(cheatInp.value == 'truegamer'){
-				let answer = prompt('Set score', current);
-				if(isNaN(answer)){
-					alert('numbers only');
-				} else {
-					current = +answer;
-					alert('Your new score: ' + answer);
-					cheatInp.value = '';
-					scoreD.innerHTML = 'Your<br> current<br> score<br><b id="time">' + current + '</b>';
-					cheater = true;
-					playAudio('buuu.mp3');
-				}
-			} if(cheatInp.value == 'moneymaker'){
-				let answer = prompt('Set coin amount', money);
-				if(isNaN(answer)){
-					alert('numbers only');
-				} else {
-					money = +answer;
-					alert('In your wallet: ' + answer);
-					cheatInp.value = '';
-					coin.style.display = 'flex';
-					moneyTxt.innerHTML = money;
-					cheater = true;
-					playAudio('buuu.mp3');
-				}
-			} else {
-				cheatInp.value = '';
-			}
-		}
+const plantStage = {
+  normal1: '1.png',
+  normal2: '2.png',
+  normal3: '3.png',
+  normal4: '4.png',
+  normal5: '5.png',
+  normal6: '6.png',
+  normal7: '7.png',
+  horror1: '8.png',
+  horror2: '9.png',
+  horror3: '10.png',
+};
 
+const SOIL_READY_SCORE = 544;
+const soilProgressPoints = [
+  { score: 0, percent: 0 },
+  { score: 19, percent: 10 },
+  { score: 39, percent: 25 },
+  { score: 49, percent: 35 },
+  { score: 71, percent: 50 },
+  { score: 91, percent: 65 },
+  { score: 201, percent: 75 },
+  { score: 295, percent: 95 },
+  { score: 394, percent: 99 },
+  { score: SOIL_READY_SCORE, percent: 100 },
+];
 
-		closeCheat.addEventListener('click', closeCheatModal); 
-		function closeCheatModal() {
-			cheatModal.style.display = 'none';
-			wrap.style.filter = 'none';
-			showStatModal();
-		}
+const dom = {
+  wrap: document.getElementById('wrap'),
+  block: document.getElementById('block'),
+  plant: document.getElementById('plant'),
+  label: document.getElementById('label'),
+  score: document.getElementById('scoreD'),
+  rank: document.getElementById('name'),
+  multiplier: document.getElementById('currentApp'),
+  soil: document.getElementById('soil'),
+  refresh: document.getElementById('refresh'),
+  showStats: document.getElementById('show_stat'),
 
+  cheatButton: document.getElementById('cheat_modal_open'),
+  cheatClose: document.getElementById('close_cheat'),
+  cheatModal: document.getElementById('modal_cheat'),
+  cheatInput: document.getElementById('cheatInp'),
+  cheatApply: document.getElementById('cheatApp'),
 
-		/*defines*/
-		let isSoiled = false;
-		const soil = document.getElementById('soil');
-		const refresh = document.getElementById('refresh');
-		const plant = document.getElementById('plant');
-		const block = document.getElementById('block');
-		const scoreD = document.getElementById('scoreD');
-		const name = document.getElementById('name');
-		const currentApp = document.getElementById('currentApp');
-		let current = 0;
-		let clicks = 0;
-		let money = 0;
-		let startTime;
-		const stat_modal = document.getElementById('stats');
-		const btnRefreshModal = document.getElementById('refresh_modal');
-		const closeDev = document.getElementById('close_devlog');
-		const closeModal = document.getElementById('close_modal');
-		const showStat = document.getElementById('show_stat');
-		let stat1 = document.getElementById('stat1');		
-		let stat2 = document.getElementById('stat2');
-		let stat3 = document.getElementById('stat3');
-		let stat4 = document.getElementById('stat4');
-		let label = document.getElementById('label');
-		let solied = '';
-		let animFlag = 0;
-		let divider = 0.89;
-		let conFlag = 0;
-		let iso = 0;
-		let storeEnabled = false;
-		block.addEventListener('click', click1);
-		block.addEventListener('click', onTimer);
-		let multi3Potion = false;
-		function onTimer() {
-			startTime = new Date();
-			block.removeEventListener('click', onTimer);
-		}
+  devlog: document.getElementById('devlog'),
+  showDevlog: document.getElementById('showDevlog'),
+  closeDevlog: document.getElementById('close_devlog'),
 
-		/*start clicking*/
-		function click1() {
-			current++;
-			clicks++;
-			playAudio('08368.mp3');
-			if(animFlag == 0 && current == 1) {
-				label.style.display = 'none';
-				showStat.style.display = 'block';
-				scoreD.classList.add('wow');
-				scoreD.classList.add('fadeInLeft');
-				refresh.classList.add('wow');
-				refresh.classList.add('slideInUp');
-				showStat.classList.add('wow');
-				showStat.classList.add('slideInDown');
-				currentApp.classList.add('wow');
-				currentApp.classList.add('fadeInRight');
-				name.classList.add('wow');
-				name.classList.add('fadeInDown');
-				scoreD.style.display = 'flex';
-				refresh.style.display = 'block';
-				currentApp.style.display = 'flex';
-				name.style.display = 'flex';
-			} else {
-				scoreD.classList.remove('wow');
-				refresh.classList.remove('wow');
-				showStat.classList.remove('wow');
-				showStat.classList.remove('slideInDown');
-				scoreD.classList.remove('fadeInLeft');
-				refresh.classList.remove('slideInUp');
-				currentApp.classList.remove('wow');
-				currentApp.classList.remove('fadeInRight');
-				name.classList.remove('wow');
-				name.classList.remove('fadeInDown');
-			} 
-			animFlag++;
-			new WOW().init();
-			soil.style.display = 'flex';
-			soil.classList.toggle('wow');
-			scoreD.innerHTML = 'Your<br> current<br> score<br><b id="time">' + current + '</b>';
-			let timer = document.getElementById('time');
-			timer.classList.toggle('wow');
-			timer.classList.toggle('tada');
-			currentApp.innerHTML = `Your<br>current<br> multiplier<br><img src="${imagePath('drop.png')}" alt="drop" id="drop">`;
-			let drop = document.getElementById('drop');
+  statsModal: document.getElementById('stats'),
+  closeStats: document.getElementById('close_modal'),
+  resetFromStats: document.getElementById('refresh_modal'),
+  statsClicks: document.getElementById('stat1'),
+  statsTime: document.getElementById('stat2'),
+  statsScore: document.getElementById('stat3'),
+  statsGold: document.getElementById('stat4'),
 
-			if(current >= 1) {
-				plant.src = imagePath('1.png');
-				new WOW().init();
-				drop.classList.add('wow');
-				drop.classList.add('tada');
-				drop.setAttribute('data-wow-duration', '2s');
-				drop.setAttribute('data-wow-iteration', '2');
-				if(cheater) {
-					name.innerHTML = 'Your rank <br><b>Cheater</b>';
-				} else {
-					name.innerHTML = 'Your rank <br><b>Tiny Sprout</b>';
-				}
-				showStat.style.display = 'block';
-			} 
-			if(current >= 6) {
-				drop.classList.remove('wow');
-				drop.classList.remove('tada');
-				drop.removeAttribute('data-wow-duration');
-			}
-			if(current == 19) {
-				solied = '10%';
-				soil.innerHTML = solied;
-			}
-			if(current > 29) {
-				if(cheater) {
-						name.innerHTML = 'Your rank <br><b>Cheater</b>';
-					} else {
-						name.innerHTML = 'Your rank <br><b>Young One</b>';
-					}
-				plant.src = imagePath('2.png');
-			}
-			if(current == 39) {
-				solied = '25%';
-				soil.innerHTML = solied;
-			}
-			if(current >= 49) {
-				solied = '35%';
-				soil.innerHTML = solied;
-			}
-			if(current > 59) {
-				block.removeEventListener('click', click1);
-				block.addEventListener('click', click2);
-				plant.src = imagePath('3.png');
-				if(cheater) {
-						name.innerHTML = 'Your rank <br><b>Cheater</b>';
-					} else {
-						name.innerHTML = 'Your rank <br><b>Teen</b>';
-					}
-			}
+  isolation: document.getElementById('isolation'),
+  progress: document.getElementById('progress'),
+  coin: document.getElementById('money'),
+  coinText: document.getElementById('money_txt'),
+  storeButton: document.getElementById('btnStore'),
 
+  storeModal: document.getElementById('modal_store'),
+  closeStore: document.getElementById('close_store'),
+  storeBody: document.getElementById('modal_store_body'),
+  storeAvailableGold: document.getElementById('nest'),
+  firstStoreCell: document.getElementById('first_store_cell'),
+  secondStoreCell: document.getElementById('second_store_cell'),
+  thirdStoreCell: document.getElementById('third_store_cell'),
+  firstStoreImage: document.getElementById('pic1'),
+  firstStoreName: document.getElementById('name1'),
 
-		}
-		let flag2 = 0;
-		function click2() {
-			playAudio('08368.mp3');
-			current += 2;
-			animFlag = '';
-			clicks++;
-			soil.classList.toggle('wow');
-			scoreD.innerHTML = 'Your<br> current<br> score<br><b id="time">' + current + '</b>';
-			let timer = document.getElementById('time');
-			timer.classList.toggle('wow');
-			timer.classList.toggle('tada');
-			currentApp.innerHTML = `Your<br> current<br> multiplier<br><img src="${imagePath('drop2.png')}" alt="drop2" id="drop">`;
-			if(flag2 >= 0) {
-					let drop = document.getElementById('drop');
-					drop.classList.add('wow');
-					drop.classList.add('tada');
-					drop.setAttribute('data-wow-duration', '2s');
-				}
-			flag2++;
-			if(flag2 >= 3) {
-					let drop = document.getElementById('drop');
-					drop.classList.remove('wow');
-					drop.classList.remove('tada');
-					drop.removeAttribute('data-wow-duration');
-				}
+  spider: document.getElementById('spider'),
+  sections: document.getElementsByClassName('section'),
+  statHeaders: document.getElementsByClassName('stats_header'),
+};
 
-			if(current >= 71) {
-				solied = '50%';
-				soil.innerHTML = solied;
-			}
-			if(current >= 91) {
-				solied = '65%';
-				soil.innerHTML = solied;
-			}
-			if(current > 110) {
-				plant.src = imagePath('4.png');
-				block.style.borderRadius = '20px';
-				if(cheater) {
-						name.innerHTML = 'Your rank <br><b>Cheater</b>';
-					} else {
-						name.innerHTML = 'Your rank<br><b>Serious One</b>';
-					}
-				block.removeEventListener('click', click2);
-				block.addEventListener('click', click3);
-			}
-		}
-		let flag3 = 0;
-		function click3() {
-			playAudio('08368.mp3');
-			current += 5;
-			clicks++;
-			soil.classList.toggle('wow');
-			scoreD.innerHTML = 'Your<br> current<br> score<br><b id="time">' + current + '</b>';
-			let timer = document.getElementById('time');
-			timer.classList.toggle('wow');
-			timer.classList.toggle('tada');
-			currentApp.innerHTML = `Your<br> current<br> multiplier<br><img src="${imagePath('drop5.png')}" alt="drop5" id="drop">`;
-			if(flag3 == 0) {
-					let drop = document.getElementById('drop');
-					drop.classList.add('wow');
-					drop.classList.add('tada');
-					drop.setAttribute('data-wow-duration', '2s');
-				}
-			if(flag3 > 8) {
-					let drop = document.getElementById('drop');
-					drop.classList.remove('wow');
-					drop.classList.remove('tada');
-					drop.removeAttribute('data-wow-duration');
-				}
-			flag3++;
+const state = {
+  current: 0,
+  clicks: 0,
+  money: 0,
+  startTime: null,
+  soilText: '',
 
-			if(current >= 201) {
-				solied = '75%';
-				soil.innerHTML = solied;
-			}
-			if(current >= 295) {
-				solied = '95%';
-				soil.innerHTML = solied;
-			}
-			if(current >= 394) {
-				current += 7;
-				solied = '99%';
-				soil.innerHTML = solied;
-			}
-			if(current >= 544) {
-				solied = '100%<br>tap<br>me!';
-				soil.style.background = 'red';
-				soil.style.width = '115px';
-				soil.style.height = '115px';
-				soil.style.borderRadius = '50px';
-				soil.innerHTML = solied;
-				soil.classList.add('getSoil');
-				soil.addEventListener('click', getSoil);
-				refresh.style.marginLeft = '56px';
-			}
-			if(current > 500) {
-				plant.src = imagePath('5.png');
-				scoreD.innerHTML = 'Your<br> current<br> score<br><b style="color:green" id="time">' + current + '</b>';
-				block.style.borderRadius = '30px';
-				if(cheater) {
-						name.innerHTML = 'Your rank <br><b>Cheater</b>';
-					} else {
-						name.innerHTML = 'Your rank<br><b>Giant!</b>';
-					}
-			}
-			
-			if(current > 993 && conFlag == 0) {
-				conFlag = 1;
-				if(confirm('Use the potion?')){
-					getSoil();
-				}
-			}
-			if(current >= 2355 && conFlag == 1) {
-				conFlag = 2;
-				if(confirm('Careful! This is your last chance to use the potion and join the dark side. There will not be another one..')) {
-					getSoil(2366);
-				} else {
-					soil.style.display = 'none';
-				}
-			}
-			if(current >= 2889) {
-				isolation.style.opacity = '1';
-				iso++;
-				startIsolation(iso,divider);
-				storeEnabled = true;
-			}
-		}
-		
-		/*soli*/
-		let flagS = 0;
-		function getSoil(score) {
-			block.removeEventListener('click', click3);
-			scoreD.innerHTML = 'Your<br> current<br> score<br><b  id="time" style="color:red;font-size:25px;">' + current + '</b>';
-			if(cheater) {
-				name.innerHTML = 'Your rank <br><b>Cheater</b>';
-			} else {
-				name.innerHTML = 'Your rank<br><b style="color:red;">Wizard!</b>';
-			}
-			currentApp.innerHTML = `Your<br> current<br> multiplier<br><img src="${imagePath('potion.png')}" alt="pot" id="drop">`;
-			block.style.borderRadius = '45px';
-			block.style.boxShadow = '0 0 50px red';
-			plant.src = imagePath('6.png');
-			solied = '0%';
-			if(flagS == 0) {
-					let drop = document.getElementById('drop');
-					drop.classList.add('wow');
-					drop.classList.add('tada');
-					drop.setAttribute('data-wow-duration', '2s');
-				}
-			if(flagS > 5) {
-					let drop = document.getElementById('drop');
-					drop.classList.remove('wow');
-					drop.classList.remove('tada');
-					drop.removeAttribute('data-wow-duration');
-				}
-			flagS++;
-			soil.innerHTML = solied;
-			if(score >= 2015) {
-				block.addEventListener('click', click7);
-			} else {
-				block.addEventListener('click', click4);
-			}
-			soil.removeEventListener('click', getSoil);
-			soil.style.textDecoration = 'line-through';
-			soil.classList.remove('getSoil');
-			soil.classList.toggle('wow');
-			soil.classList.toggle('pulse');
-			isSoiled = true;	
-		}
+  cheater: false,
+  isSoiled: false,
+  storeEnabled: false,
+  multi3Potion: false,
 
-		/*continuation */
-		function click4() {
-			playAudio('08368.mp3');
-			soil.style.display = 'none';
-			current += 11;
-			clicks++;
-			scoreD.innerHTML = 'Your<br> current<br> score<br><b  id="time" style="color:red;font-size:25px;">' + current + '</b>';
-			let timer = document.getElementById('time');
-			timer.classList.toggle('wow');
-			timer.classList.toggle('tada');
-			currentApp.innerHTML = `Your<br> current<br> multiplier<br><img src="${imagePath('potion.png')}" alt="pot" id="drop">`;
-			if(current >= 1051) {
-				block.removeEventListener('click', click4);
-				block.addEventListener('click', click5);
-			}
-		}
-		function click5() {
-			playAudio('08368.mp3');
-			current = current + 13;
-			scoreD.style.width = '28%';
-			currentApp.style.width = '28%';
-			name.style.width = '68%';
-			if(cheater) {
-				name.innerHTML = 'Your rank <br><b>Cheater</b>';
-			} else {
-				name.innerHTML = 'Your rank <br><b style="color:blue;">Archmage</b>';
-			}
-			scoreD.innerHTML = 'Your<br> current<br> score<br><b id="time" style="color:blue;font-size:25px;">' + current + '</b>';
-			clicks++;
-			let timer = document.getElementById('time');
-			timer.classList.toggle('wow');
-			timer.classList.toggle('tada');
-			if(current > 1549) {
-				block.removeEventListener('click', click5);
-				block.addEventListener('click', click6);
-			}
-		}
-		let flag6 = 0;
-		function click6() {
-			playAudio('08368.mp3');
-			current += 17;
-			clicks++;
-			scoreD.innerHTML = 'Your<br> current<br> score<br><b  id="time" style="color:blue;font-size:25.2px;text-shadow:0 0 1px red;">' + current + '</b>';
-			let timer = document.getElementById('time');
-			timer.classList.toggle('wow');
-			timer.classList.toggle('tada');
-			currentApp.innerHTML = `Your<br> current<br> multiplier<br><img src="${imagePath('potion2.png')}" alt="pot" id="drop">`;
-			if(flag6 == 0) {
-					let drop = document.getElementById('drop');
-					drop.classList.add('wow');
-					drop.classList.add('tada');
-					drop.setAttribute('data-wow-duration', '2s');
-				}
-			if(flag6 > 7) {
-					let drop = document.getElementById('drop');
-					drop.classList.remove('wow');
-					drop.classList.remove('tada');
-					drop.removeAttribute('data-wow-duration');
-				}
-			flag6++;
-			if(current > 2014) {
-				block.removeEventListener('click', click6);
-				block.addEventListener('click', click7);
-			}
-		}
-		
-		function click7() {
-			playAudio('08368.mp3');
-			soil.style.display = 'none';
-			current += 18;
-			clicks++;
-			if(isSoiled){
-				if(cheater) {
-						name.innerHTML = 'Your rank <br><b>Cheater</b>';
-					} else {
-						name.innerHTML = 'Your rank<br><b style="color:blue;text-shadow:0 0 2px black;">Necromancer</b>';
-					}
-				plant.src = imagePath('7.png');				
-			}
-			if(!isSoiled){
-				plant.src = imagePath('5.png');				
-			}
-			if(!isSoiled && !multi3Potion) {
-				if(cheater) {
-						name.innerHTML = 'Your rank <br><b>Cheater</b>';
-					} else {
-						name.innerHTML = `Your rank<br><b style="color:green;text-shadow:0 0 2px black;">Farmer's <br>Helper</b>`;
-					}
-				}
-			scoreD.innerHTML = 'Your<br> current<br> score<br><b  id="time" style="color:blue;font-size:25.3px;text-shadow:0 0 2px red;">' + current + '</b>';
-			let timer = document.getElementById('time');
-			timer.classList.toggle('wow');
-			timer.classList.toggle('tada');
-			timer.setAttribute('data-wow-duration', '2s');
-			if(current >= 3000) {
-				isolation.style.opacity = '1';
-				iso++;
-				startIsolation(iso,divider);
-				storeEnabled = true;
-			}
-		}
-		/*audio*/
-		function playAudio(file){
-			let myAudio = new Audio;
-			myAudio.src = audioPath(file);
-			myAudio.play();
-		}
+  animationFlag: 0,
+  divider: 0.89,
+  confirmationStep: 0,
+  isolationTicks: 0,
+  soilReady: false,
 
+  drop2Flag: 0,
+  drop5Flag: 0,
+  soilFlag: 0,
+  potion2Flag: 0,
+  boughtMultiplierFlag: 0,
+};
 
-		/*modal*/
+dom.coinText.innerHTML = 1;
 
-		closeDev.addEventListener('click', closeDevlog);
-		btnRefreshModal.addEventListener('click', resetModal);
-		const btnShowDevlog = document.getElementById('showDevlog');
-		const dev_modal = document.getElementById('devlog');
-		btnShowDevlog.addEventListener('click', showDevlog);
-		function showDevlog() {
-			dev_modal.style.display = 'flex';
-			wrap.style.filter = 'blur(10px) grayscale(3)';
-		}
+function initWow() {
+  if (window.WOW) {
+    new window.WOW().init();
+  }
+}
 
-		function closeDevlog() {
-			dev_modal.style.display = 'none';
-			wrap.style.filter = 'none';			
-		}
+function playAudio(file) {
+  const audio = new Audio();
+  audio.src = audioPath(file);
+  audio.play();
+}
 
-		function resetModal() {
-				window.location.reload(false);
-		}
-		refresh.addEventListener('click', resetAll);
-		function resetAll() {
-				let answer = confirm('Show stats?');
-				if(answer) {
-					showStatModal();
-				} else {
-					window.location.reload(false);
-				}
-		}
+function setScore(style = '') {
+  const styleAttribute = style ? ` style="${style}"` : '';
+  dom.score.innerHTML = `
+    <div class="section_panel">
+      <div class="section_label">Your current score</div>
+      <div class="section_value" id="time"${styleAttribute}>${state.current}</div>
+    </div>
+  `;
+}
 
-		/*isolation*/
-		const persent = '%';
-		const progress = document.getElementById('progress');
-		const isolation = document.getElementById('isolation');
-		const coin = document.getElementById('money');
-		const store = document.getElementById('btnStore');
-		let moneyTxt = document.getElementById('money_txt');
-		const test = document.getElementById('test');
-		moneyTxt.innerHTML = 1;
-		function startIsolation(num, div) {
-			let currentNum = Math.floor(num * div);
-			store.style.display = 'flex';
-			if(currentNum <= 99) {
-				progress.style.height =  currentNum + persent;
-				progress.style.transform = 'scale(1)';
-			} else {
-				new WOW().init();
-				progress.style.height = '100%';
-				progress.style.transform = 'scale(1.1)';
-				coin.style.display = 'flex';
-				coin.classList.add('wow');
-				coin.classList.add('rubberBand');
-				coin.setAttribute('data-wow-duration', '2s');
-				money++;
-				divider +=0.13;
-				moneyTxt.innerHTML = money;
-				iso = 0;
-				if(money == 999) {
-					alert('you are sick, buddy!');
-					window.location.reload(false);
-				}
-				return;
-			}
-			
-			//test.innerHTML = num + ' /  ' + div;
+function animateScore() {
+  const timer = document.getElementById('time');
+  if (!timer) return;
+  timer.classList.toggle('wow');
+  timer.classList.toggle('tada');
+}
 
+function setMultiplier(image, alt, compact = false) {
+  dom.multiplier.innerHTML = `
+    <div class="section_panel section_panel--multiplier">
+      <div class="section_label">Your current multiplier</div>
+      <img class="section_media" src="${imagePath(image)}" alt="${alt}" id="drop">
+    </div>
+  `;
+}
 
-		}
-		
+function getDrop() {
+  return document.getElementById('drop');
+}
 
-		/*stat modal*/
-		showStat.addEventListener('click', showStatModal);
-		function showStatModal() {
-			let endTime = new Date();
-			let totalTime = startTime ? endTime - startTime : 0;
-			let totalSeconds = Math.round(totalTime / 1000);
-			let finalTime = totalSeconds + ' sec';
-			if(totalSeconds >= 3600){
-				finalTime = Math.round(totalSeconds / 3600) + ' hr';
-			} else if(totalSeconds >= 60){
-				finalTime = Math.round(totalSeconds / 60) + ' min';
-			}
-			stat_modal.style.display = 'flex';
-			wrap.style.filter = 'blur(10px) grayscale(3)';
-			stat1.innerHTML = clicks;
-			stat2.innerHTML = finalTime;
-			stat3.innerHTML = current;
-			stat4.innerHTML = money + '<br> gold';
-			refresh.style.display = 'none';
-			store.style.display = 'none';
-			isolation.style.opacity = '0';
-			
+function animateDrop(drop) {
+  if (!drop) return;
+  drop.classList.add('wow');
+  drop.classList.add('tada');
+  drop.setAttribute('data-wow-duration', '2s');
+}
 
-		}
-		closeModal.addEventListener('click', closeStatModal);
-		function closeStatModal(){
-			stat_modal.style.display = 'none';
-			wrap.style.filter = 'none';
-			refresh.style.display = 'block';
-			if(storeEnabled) {
-				store.style.display = 'flex';
-				isolation.style.opacity = '1';
-			}
-		}
+function stopDropAnimation(drop) {
+  if (!drop) return;
+  drop.classList.remove('wow');
+  drop.classList.remove('tada');
+  drop.removeAttribute('data-wow-duration');
+}
 
-		/*store modal*/
-		const pic1 = document.getElementById('pic1');
-		const name1 = document.getElementById('name1');
-		const store_modal = document.getElementById('modal_store');
-		const btn_close_store_modal = document.getElementById('close_store');
-		store.addEventListener('click', showStore);
-		let nest = document.getElementById('nest');
-		btn_close_store_modal.addEventListener('click', hideStore);
-		function showStore() {
-			if(isSoiled) {
-				pic1.src = imagePath('potion3_fullsize.png');
-				name1.innerHTML = 'Potion x3';
-			}if(!isSoiled) {
-				pic1.src = imagePath('can2_fullsize.png');
-				name1.innerHTML = 'Watering Can x2';
-			}
-			store_modal.style.display = 'flex';
-			store_modal.style.opacity = '0.95';
-			wrap.style.filter = 'blur(10px) grayscale(3)';
-			isolation.style.opacity = '0';
-			store.style.display = 'none';
-			coin.style.display = 'none';
-			nest.innerHTML = money;
-			if(money == 0) {
-				nest.style.color = 'red';
-			} else {
-				nest.style.color = 'green';
-			}
+function setRank(rank, style = '') {
+  const styleAttribute = style ? ` style="${style}"` : '';
+  dom.rank.innerHTML = `
+    <div class="section_panel">
+      <div class="section_label">Your rank</div>
+      <div class="section_value section_value--rank"${styleAttribute}>${rank}</div>
+    </div>
+  `;
+}
 
-		}
-		function hideStore() {
-			store_modal.style.opacity = '0';
-			store_modal.style.display = 'none';
-			wrap.style.filter = 'none';
-			isolation.style.opacity = '1';
-			store.style.display = 'flex';
-			if(money == 0) {
-				coin.style.display = 'none';
-			} else {
-				coin.style.display = 'flex';
-			}
-		}
+function setProgressRank(rank, style = '') {
+  setRank(state.cheater ? 'Cheater' : rank, style);
+}
 
+function setSoil(text) {
+  state.soilText = text;
+  dom.soil.innerHTML = state.soilText;
+}
 
-		/*store multipliers*/
-		
-		const firstCell = document.getElementById('first_store_cell');
-		firstCell.addEventListener('click', startFirstCell);
-		function startFirstCell() {
-			if(money < 2) {
-				alert('You are too broke for this, earn some gold and come back');
-			} if(money >= 2) {
-				if(isSoiled) {
-					currentApp.innerHTML = `Your<br> current<br> multiplier<br><img src="${imagePath('potion3.png')}" alt="pot3" id="drop">`;
-					if(cheater) {
-						name.innerHTML = 'Your rank <br><b>Cheater</b>';
-					} else {
-						name.innerHTML = 'Your rank<br><b style="color:blue;text-shadow:0 0 2px black;">Dark Lord</b>';
-					}
-				} if(!isSoiled) {
-					currentApp.innerHTML = `Your<br> current<br> multiplier<br><img src="${imagePath('can2.png')}" alt="pot3" id="drop">`;
-					if(cheater) {
-						name.innerHTML = 'Your rank <br><b>Cheater</b>';
-					} else {
-						name.innerHTML = 'Your rank<br><b style="color:green;text-shadow:0 0 2px black;">Farmer</b>';
-					}
-				}
-				multi3Potion = true;
-				playAudio('buy.mp3');
-				block.removeEventListener('click', click3);
-				block.removeEventListener('click', click4);
-				block.removeEventListener('click', click5);
-				block.removeEventListener('click', click6);
-				block.removeEventListener('click', click7);
-				block.addEventListener('click', click8);
-				firstCell.removeEventListener('click', startFirstCell);
-				firstCell.classList.add('unactive');
-				hideStore();
-				money -= 2;
-				moneyTxt.innerHTML = money;
-				
+function getSoilPercent(score) {
+  if (score <= 0) return 0;
 
-			}
-		}
+  for (let i = 1; i < soilProgressPoints.length; i++) {
+    const previous = soilProgressPoints[i - 1];
+    const next = soilProgressPoints[i];
 
-		const secondCell = document.getElementById('second_store_cell');
-		secondCell.addEventListener('click', startSecondCell);
-		function startSecondCell() {
-			if(money < 7 && isSoiled) {
-				alert('You are too broke for this, earn some gold and come back');
-			}
-			if(!isSoiled) {
-				alert('Looks like you do not need this!');
-			} if(money >= 7 && isSoiled) {
-				plant.src = imagePath('5.png');
-				playAudio('buy.mp3');
-				isSoiled = false;
-				secondCell.removeEventListener('click', startSecondCell);
-				secondCell.classList.add('unactive');
-				hideStore();
-				money -= 7;
-				moneyTxt.innerHTML = money;
-				currentApp.innerHTML = `Your<br> current<br> multiplier<br><img src="${imagePath('can2.png')}" alt="pot3" id="drop">`;
-				if(multi3Potion) {
-					if(cheater) {
-						name.innerHTML = 'Your rank <br><b>Cheater</b>';
-					} else {
-						name.innerHTML = 'Your rank<br><b style="color:green;text-shadow:0 0 2px black;">Farmer</b>';
-					}
-					currentApp.innerHTML = `Your<br> current<br> multiplier<br><img src="${imagePath('can2.png')}" alt="can2" id="drop">`;
-				} else {
-					currentApp.innerHTML = `Your<br> current<br> multiplier<br><img src="${imagePath('can1.png')}" alt="pot3" id="drop">`;
-					if(cheater) {
-						name.innerHTML = 'Your rank <br><b>Cheater</b>';
-					} else {
-						name.innerHTML = `Your rank<br><b style="color:green;text-shadow:0 0 2px black;">Farmer's<br>Helper</b>`;
-					}
-				}
-			}
-		}
-		const thirdCell = document.getElementById('third_store_cell');
-		thirdCell.addEventListener('click', startThirdCell);
-		const spider = document.getElementById('spider');
-		let sections = document.getElementsByClassName('section');
-		let pStatsHeaders = document.getElementsByClassName('stats_header');
-		const modalStoreBody = document.getElementById('modal_store_body');
-		function startThirdCell() {
-			if(money < 9) {
-				alert('You are too broke for this, earn some gold and come back');
-			}
-			if(money >= 9) {
-				for(let i = 0;i < sections.length;i++) {
-					sections[i].style.borderBottom = '17px solid white';
-					sections[i].style.borderImage = `url(${imagePath('hlbak.png')}) round round 50`;
-				}
-				playAudio('crown.wav');
-				block.removeAttribute('ink-color');
-				block.setAttribute('ink-color', 'orange');
-				block.style.boxShadow = '0 0 23px orange';
-				block.style.background = 'ivory';
-				cheatBtn.style.background = 'orange';
-				refresh.style.background = 'orange';
-				spider.style.display = 'block';
-				showStat.style.background = 'orange';
-				btn_close_store_modal.style.background = 'orange';
-				stat_modal.style.background = `url(${imagePath('modalStoreBody.png')})`;
-				store_modal.style.background = `url(${imagePath('modalStoreBody.png')})`;
-				for(let x =0;x < modalStoreBody.children.length;x++){
-					modalStoreBody.children[x].style.border = '1px solid grey';
-				}
-				for(let x = 0; x < pStatsHeaders.length; x++) {
-					pStatsHeaders[x].style.background = 'orange';
-				}
-				btnRefreshModal.style.background = 'orange';
-				thirdCell.removeEventListener('click', startThirdCell);
-				thirdCell.classList.add('unactive');
-				money -= 9;
-				moneyTxt.innerHTML = money;
-				nest.innerHTML = money;
-			}	
-		}
+    if (score <= next.score) {
+      const scoreRange = next.score - previous.score;
+      const percentRange = next.percent - previous.percent;
+      const scoreProgress = score - previous.score;
+      return Math.min(100, Math.round(previous.percent + (scoreProgress / scoreRange) * percentRange));
+    }
+  }
 
+  return 100;
+}
 
-		/*click8 with purchased multiplier potion*/
-		let flag8 = 0;
-		function click8() {
-			current += 27;
-			clicks++;
-			playAudio('08368.mp3');
-			if(isSoiled) {
-				if(cheater) {
-					name.innerHTML = 'Your rank <br><b>Cheater</b>';
-				} else {
-					name.innerHTML = 'Your rank<br><b style="color:blue;text-shadow:0 0 2px black;">Dark Lord</b>';
-				}
-			}
-			if(!isSoiled) {
-				if(cheater) {
-					name.innerHTML = 'Your rank <br><b>Cheater</b>';
-				} else {
-					name.innerHTML = 'Your rank<br><b style="color:green;text-shadow:0 0 2px black;">Farmer</b>';
-				}
+function activateSoilButton() {
+  if (state.soilReady) return;
 
-			}
-			if(multi3Potion && isSoiled) {
-				currentApp.innerHTML = `Your<br> current<br> multiplier<br><img src="${imagePath('potion3.png')}" alt="pot3" id="drop">`;
-			}
-			if(multi3Potion && !isSoiled) {
-				currentApp.innerHTML = `Your<br> current<br> multiplier<br><img src="${imagePath('can2.png')}" alt="pot3" id="drop">`;
-			}
+  state.soilReady = true;
+  dom.soil.style.background = 'red';
+  dom.soil.style.width = '115px';
+  dom.soil.style.height = '115px';
+  dom.soil.style.borderRadius = '50px';
+  dom.soil.classList.add('getSoil');
+  dom.soil.addEventListener('click', getSoil);
+  dom.refresh.style.marginLeft = '56px';
+}
 
-			scoreD.innerHTML = 'Your<br> current<br> score<br><b  id="time" style="color:blue;font-size:25.6px;text-shadow:0 0 2px royalblue;">' + current + '</b>';
-			let timer = document.getElementById('time');
-			timer.classList.toggle('wow');
-			timer.classList.toggle('tada');
-			timer.setAttribute('data-wow-duration', '2s');
+function updateSoilProgress() {
+  if (state.isSoiled) return;
 
-			if(flag8 == 0) {
-					let drop = document.getElementById('drop');
-					drop.classList.add('wow');
-					drop.classList.add('tada');
-					drop.setAttribute('data-wow-duration', '2s');
-				}
-			if(flag8 > 7) {
-					let drop = document.getElementById('drop');
-					drop.classList.remove('wow');
-					drop.classList.remove('tada');
-					drop.removeAttribute('data-wow-duration');
-				}
-			flag8++;
-			iso++;
-			startIsolation(iso,divider);
-		}
+  const percent = getSoilPercent(state.current);
+  if (percent >= 100) {
+    setSoil('<span class="soil_percent">100%</span><span class="soil_cta">tap me!</span>');
+    activateSoilButton();
+    return;
+  }
 
+  setSoil(`${percent}%`);
+}
 
+function setPlant(stage) {
+  dom.plant.src = imagePath(stage);
+}
+
+function addClickHandler(handler) {
+  dom.block.addEventListener('click', handler);
+}
+
+function removeClickHandler(handler) {
+  dom.block.removeEventListener('click', handler);
+}
+
+function replaceClickHandler(from, to) {
+  removeClickHandler(from);
+  addClickHandler(to);
+}
+
+function revealGameUi() {
+  dom.label.style.display = 'none';
+  dom.showStats.style.display = 'block';
+
+  dom.score.classList.add('wow', 'fadeInLeft');
+  dom.refresh.classList.add('wow', 'slideInUp');
+  dom.showStats.classList.add('wow', 'slideInDown');
+  dom.multiplier.classList.add('wow', 'fadeInRight');
+  dom.rank.classList.add('wow', 'fadeInDown');
+
+  dom.score.style.display = 'flex';
+  dom.refresh.style.display = 'block';
+  dom.multiplier.style.display = 'flex';
+  dom.rank.style.display = 'flex';
+}
+
+function clearIntroAnimations() {
+  dom.score.classList.remove('wow', 'fadeInLeft');
+  dom.refresh.classList.remove('wow', 'slideInUp');
+  dom.showStats.classList.remove('wow', 'slideInDown');
+  dom.multiplier.classList.remove('wow', 'fadeInRight');
+  dom.rank.classList.remove('wow', 'fadeInDown');
+}
+
+function recordClick(amount) {
+  state.current += amount;
+  state.clicks++;
+  playAudio('08368.mp3');
+}
+
+function startTimerOnce() {
+  state.startTime = new Date();
+  removeClickHandler(startTimerOnce);
+}
+
+function openCheatModal() {
+  dom.cheatModal.style.display = 'flex';
+  dom.wrap.style.filter = 'blur(10px) grayscale(3)';
+  closeStatsModal();
+  dom.cheatInput.value = '';
+}
+
+function applyCheatCode() {
+  if (dom.cheatInput.value == 'truegamer') {
+    const answer = prompt('Set score', state.current);
+    if (isNaN(answer)) {
+      alert('numbers only');
+    } else {
+      state.current = +answer;
+      alert('Your new score: ' + answer);
+      dom.cheatInput.value = '';
+      setScore();
+      state.cheater = true;
+      playAudio('buuu.mp3');
+    }
+  } if (dom.cheatInput.value == 'moneymaker') {
+    const answer = prompt('Set coin amount', state.money);
+    if (isNaN(answer)) {
+      alert('numbers only');
+    } else {
+      state.money = +answer;
+      alert('In your wallet: ' + answer);
+      dom.cheatInput.value = '';
+      dom.coin.style.display = 'flex';
+      dom.coinText.innerHTML = state.money;
+      state.cheater = true;
+      playAudio('buuu.mp3');
+    }
+  } else {
+    dom.cheatInput.value = '';
+  }
+}
+
+function closeCheatModal() {
+  dom.cheatModal.style.display = 'none';
+  dom.wrap.style.filter = 'none';
+  showStatsModal();
+}
+
+function click1() {
+  recordClick(1);
+
+  if (state.animationFlag == 0 && state.current == 1) {
+    revealGameUi();
+  } else {
+    clearIntroAnimations();
+  }
+
+  state.animationFlag++;
+  initWow();
+  dom.soil.style.display = 'flex';
+  dom.soil.classList.toggle('wow');
+
+  setScore();
+  animateScore();
+  setMultiplier('drop.png', 'drop', true);
+
+  const drop = getDrop();
+  if (state.current >= 1) {
+    setPlant(plantStage.normal1);
+    initWow();
+    animateDrop(drop);
+    drop.setAttribute('data-wow-iteration', '2');
+    setProgressRank('Tiny Sprout');
+    dom.showStats.style.display = 'block';
+  }
+  if (state.current >= 6) {
+    stopDropAnimation(drop);
+  }
+  if (state.current >= 15) {
+    setPlant(plantStage.normal2);
+    setProgressRank('First Leaf');
+  }
+  if (state.current > 29) {
+    setProgressRank('Young One');
+    setPlant(plantStage.normal3);
+  }
+  if (state.current > 59) {
+    replaceClickHandler(click1, click2);
+    setPlant(plantStage.normal4);
+    setProgressRank('Teen');
+  }
+
+  updateSoilProgress();
+}
+
+function click2() {
+  recordClick(2);
+  state.animationFlag = '';
+  dom.soil.classList.toggle('wow');
+
+  setScore();
+  animateScore();
+  setMultiplier('drop2.png', 'drop2');
+
+  if (state.drop2Flag >= 0) {
+    animateDrop(getDrop());
+  }
+  state.drop2Flag++;
+  if (state.drop2Flag >= 3) {
+    stopDropAnimation(getDrop());
+  }
+
+  if (state.current >= 91) {
+    setPlant(plantStage.normal5);
+  }
+  if (state.current > 110) {
+    setPlant(plantStage.normal5);
+    dom.block.style.borderRadius = '20px';
+    setProgressRank('Serious One');
+    replaceClickHandler(click2, click3);
+  }
+
+  updateSoilProgress();
+}
+
+function click3() {
+  recordClick(5);
+  dom.soil.classList.toggle('wow');
+
+  setScore();
+  animateScore();
+  setMultiplier('drop5.png', 'drop5');
+
+  if (state.drop5Flag == 0) {
+    animateDrop(getDrop());
+  }
+  if (state.drop5Flag > 8) {
+    stopDropAnimation(getDrop());
+  }
+  state.drop5Flag++;
+
+  if (state.current >= 295) {
+    setPlant(plantStage.normal6);
+    setProgressRank('Broadleaf');
+  }
+  if (state.current >= 394) {
+    state.current += 7;
+  }
+  updateSoilProgress();
+  if (state.current > 500) {
+    setPlant(plantStage.normal7);
+    setScore('color:green');
+    dom.block.style.borderRadius = '30px';
+    setProgressRank('Giant!');
+  }
+  if (state.current > 993 && state.confirmationStep == 0) {
+    state.confirmationStep = 1;
+    if (confirm('Use the potion?')) {
+      getSoil();
+    }
+  }
+  if (state.current >= 2355 && state.confirmationStep == 1) {
+    state.confirmationStep = 2;
+    if (confirm('Careful! This is your last chance to use the potion and join the dark side. There will not be another one..')) {
+      getSoil(2366);
+    } else {
+      dom.soil.style.display = 'none';
+    }
+  }
+  if (state.current >= 2889) {
+    dom.isolation.style.opacity = '1';
+    state.isolationTicks++;
+    startIsolation(state.isolationTicks, state.divider);
+    state.storeEnabled = true;
+  }
+}
+
+function getSoil(score) {
+  removeClickHandler(click3);
+  setScore('color:red;font-size:25px;');
+  setProgressRank('Wizard!', 'color:red;');
+  setMultiplier('potion.png', 'pot');
+
+  dom.block.style.borderRadius = '45px';
+  dom.block.style.boxShadow = '0 0 50px red';
+  setPlant(plantStage.horror1);
+
+  setSoil('0%');
+  if (state.soilFlag == 0) {
+    animateDrop(getDrop());
+  }
+  if (state.soilFlag > 5) {
+    stopDropAnimation(getDrop());
+  }
+  state.soilFlag++;
+
+  if (score >= 2015) {
+    addClickHandler(click7);
+  } else {
+    addClickHandler(click4);
+  }
+
+  dom.soil.removeEventListener('click', getSoil);
+  dom.soil.style.textDecoration = 'line-through';
+  dom.soil.classList.remove('getSoil');
+  dom.soil.classList.toggle('wow');
+  dom.soil.classList.toggle('pulse');
+  state.isSoiled = true;
+}
+
+function click4() {
+  recordClick(11);
+  dom.soil.style.display = 'none';
+
+  setScore('color:red;font-size:25px;');
+  animateScore();
+  setMultiplier('potion.png', 'pot');
+
+  if (state.current >= 1051) {
+    replaceClickHandler(click4, click5);
+  }
+}
+
+function click5() {
+  recordClick(13);
+  dom.score.style.width = '28%';
+  dom.multiplier.style.width = '28%';
+  dom.rank.style.width = '68%';
+
+  setProgressRank('Archmage', 'color:blue;');
+  setScore('color:blue;font-size:25px;');
+  animateScore();
+
+  if (state.current > 1549) {
+    replaceClickHandler(click5, click6);
+  }
+}
+
+function click6() {
+  recordClick(17);
+  setScore('color:blue;font-size:25.2px;text-shadow:0 0 1px red;');
+  animateScore();
+  setMultiplier('potion2.png', 'pot');
+
+  if (state.potion2Flag == 0) {
+    animateDrop(getDrop());
+  }
+  if (state.potion2Flag > 7) {
+    stopDropAnimation(getDrop());
+  }
+  state.potion2Flag++;
+
+  if (state.current > 2014) {
+    replaceClickHandler(click6, click7);
+  }
+}
+
+function click7() {
+  recordClick(18);
+  dom.soil.style.display = 'none';
+
+  if (state.isSoiled) {
+    setProgressRank('Necromancer', 'color:blue;text-shadow:0 0 2px black;');
+    setPlant(plantStage.horror2);
+  }
+  if (!state.isSoiled) {
+    setPlant(plantStage.normal7);
+  }
+  if (!state.isSoiled && !state.multi3Potion) {
+    setProgressRank(`Farmer's Helper`, 'color:green;text-shadow:0 0 2px black;');
+  }
+
+  setScore('color:blue;font-size:25.3px;text-shadow:0 0 2px red;');
+  animateScore();
+  const timer = document.getElementById('time');
+  timer.setAttribute('data-wow-duration', '2s');
+
+  if (state.current >= 3000) {
+    dom.isolation.style.opacity = '1';
+    state.isolationTicks++;
+    startIsolation(state.isolationTicks, state.divider);
+    state.storeEnabled = true;
+  }
+}
+
+function showDevlog() {
+  dom.devlog.style.display = 'flex';
+  dom.wrap.style.filter = 'blur(10px) grayscale(3)';
+}
+
+function closeDevlog() {
+  dom.devlog.style.display = 'none';
+  dom.wrap.style.filter = 'none';
+}
+
+function resetPage() {
+  window.location.reload(false);
+}
+
+function resetWithStatsPrompt() {
+  const answer = confirm('Show stats?');
+  if (answer) {
+    showStatsModal();
+  } else {
+    resetPage();
+  }
+}
+
+function startIsolation(num, divider) {
+  const currentNum = Math.floor(num * divider);
+  dom.storeButton.style.display = 'flex';
+
+  if (currentNum <= 99) {
+    dom.progress.style.height = currentNum + '%';
+    dom.progress.style.transform = 'scale(1)';
+    return;
+  }
+
+  initWow();
+  dom.progress.style.height = '100%';
+  dom.progress.style.transform = 'scale(1.1)';
+  dom.coin.style.display = 'flex';
+  dom.coin.classList.add('wow', 'rubberBand');
+  dom.coin.setAttribute('data-wow-duration', '2s');
+
+  state.money++;
+  state.divider += 0.13;
+  dom.coinText.innerHTML = state.money;
+  state.isolationTicks = 0;
+
+  if (state.money == 999) {
+    alert('you are sick, buddy!');
+    resetPage();
+  }
+}
+
+function formatPlayTime() {
+  const endTime = new Date();
+  const totalTime = state.startTime ? endTime - state.startTime : 0;
+  const totalSeconds = Math.round(totalTime / 1000);
+
+  if (totalSeconds >= 3600) {
+    return Math.round(totalSeconds / 3600) + ' hr';
+  }
+  if (totalSeconds >= 60) {
+    return Math.round(totalSeconds / 60) + ' min';
+  }
+  return totalSeconds + ' sec';
+}
+
+function showStatsModal() {
+  dom.statsModal.style.display = 'flex';
+  dom.wrap.style.filter = 'blur(10px) grayscale(3)';
+
+  dom.statsClicks.innerHTML = state.clicks;
+  dom.statsTime.innerHTML = formatPlayTime();
+  dom.statsScore.innerHTML = state.current;
+  dom.statsGold.innerHTML = state.money + '<br> gold';
+
+  dom.refresh.style.display = 'none';
+  dom.storeButton.style.display = 'none';
+  dom.isolation.style.opacity = '0';
+}
+
+function closeStatsModal() {
+  dom.statsModal.style.display = 'none';
+  dom.wrap.style.filter = 'none';
+  dom.refresh.style.display = 'block';
+
+  if (state.storeEnabled) {
+    dom.storeButton.style.display = 'flex';
+    dom.isolation.style.opacity = '1';
+  }
+}
+
+function showStore() {
+  if (state.isSoiled) {
+    dom.firstStoreImage.src = imagePath('potion3_fullsize.png');
+    dom.firstStoreName.innerHTML = 'Potion x3';
+  }
+  if (!state.isSoiled) {
+    dom.firstStoreImage.src = imagePath('can2_fullsize.png');
+    dom.firstStoreName.innerHTML = 'Watering Can x2';
+  }
+
+  dom.storeModal.style.display = 'flex';
+  dom.storeModal.style.opacity = '0.95';
+  dom.wrap.style.filter = 'blur(10px) grayscale(3)';
+  dom.isolation.style.opacity = '0';
+  dom.storeButton.style.display = 'none';
+  dom.coin.style.display = 'none';
+  dom.storeAvailableGold.innerHTML = state.money;
+  dom.storeAvailableGold.style.color = state.money == 0 ? 'red' : 'green';
+}
+
+function hideStore() {
+  dom.storeModal.style.opacity = '0';
+  dom.storeModal.style.display = 'none';
+  dom.wrap.style.filter = 'none';
+  dom.isolation.style.opacity = '1';
+  dom.storeButton.style.display = 'flex';
+  dom.coin.style.display = state.money == 0 ? 'none' : 'flex';
+}
+
+function removeLateGameClickHandlers() {
+  removeClickHandler(click3);
+  removeClickHandler(click4);
+  removeClickHandler(click5);
+  removeClickHandler(click6);
+  removeClickHandler(click7);
+}
+
+function buyFirstStoreItem() {
+  if (state.money < 2) {
+    alert('You are too broke for this, earn some gold and come back');
+  } if (state.money >= 2) {
+    if (state.isSoiled) {
+      setMultiplier('potion3.png', 'pot3');
+      setPlant(plantStage.horror3);
+      setProgressRank('Dark Lord', 'color:blue;text-shadow:0 0 2px black;');
+    } if (!state.isSoiled) {
+      setMultiplier('can2.png', 'pot3');
+      setProgressRank('Farmer', 'color:green;text-shadow:0 0 2px black;');
+    }
+
+    state.multi3Potion = true;
+    playAudio('buy.mp3');
+    removeLateGameClickHandlers();
+    addClickHandler(click8);
+    dom.firstStoreCell.removeEventListener('click', buyFirstStoreItem);
+    dom.firstStoreCell.classList.add('unactive');
+    hideStore();
+    state.money -= 2;
+    dom.coinText.innerHTML = state.money;
+  }
+}
+
+function buySecondStoreItem() {
+  if (state.money < 7 && state.isSoiled) {
+    alert('You are too broke for this, earn some gold and come back');
+  }
+  if (!state.isSoiled) {
+    alert('Looks like you do not need this!');
+  } if (state.money >= 7 && state.isSoiled) {
+    setPlant(plantStage.normal7);
+    playAudio('buy.mp3');
+    state.isSoiled = false;
+    dom.secondStoreCell.removeEventListener('click', buySecondStoreItem);
+    dom.secondStoreCell.classList.add('unactive');
+    hideStore();
+    state.money -= 7;
+    dom.coinText.innerHTML = state.money;
+
+    setMultiplier('can2.png', 'pot3');
+    if (state.multi3Potion) {
+      setProgressRank('Farmer', 'color:green;text-shadow:0 0 2px black;');
+      setMultiplier('can2.png', 'can2');
+    } else {
+      setMultiplier('can1.png', 'pot3');
+      setProgressRank(`Farmer's Helper`, 'color:green;text-shadow:0 0 2px black;');
+    }
+  }
+}
+
+function buyThirdStoreItem() {
+  if (state.money < 9) {
+    alert('You are too broke for this, earn some gold and come back');
+  }
+  if (state.money >= 9) {
+    for (let i = 0; i < dom.sections.length; i++) {
+      dom.sections[i].style.borderBottom = '17px solid white';
+      dom.sections[i].style.borderImage = `url(${imagePath('hlbak.png')}) round round 50`;
+    }
+
+    playAudio('crown.wav');
+    dom.block.removeAttribute('ink-color');
+    dom.block.setAttribute('ink-color', 'orange');
+    dom.block.style.boxShadow = '0 0 23px orange';
+    dom.block.style.background = 'ivory';
+    dom.cheatButton.style.background = 'orange';
+    dom.refresh.style.background = 'orange';
+    dom.spider.style.display = 'block';
+    dom.showStats.style.background = 'orange';
+    dom.closeStore.style.background = 'orange';
+    dom.statsModal.style.background = `url(${imagePath('modalStoreBody.png')})`;
+    dom.storeModal.style.background = `url(${imagePath('modalStoreBody.png')})`;
+
+    for (let i = 0; i < dom.storeBody.children.length; i++) {
+      dom.storeBody.children[i].style.border = '1px solid grey';
+    }
+    for (let i = 0; i < dom.statHeaders.length; i++) {
+      dom.statHeaders[i].style.background = 'orange';
+    }
+
+    dom.resetFromStats.style.background = 'orange';
+    dom.thirdStoreCell.removeEventListener('click', buyThirdStoreItem);
+    dom.thirdStoreCell.classList.add('unactive');
+    state.money -= 9;
+    dom.coinText.innerHTML = state.money;
+    dom.storeAvailableGold.innerHTML = state.money;
+  }
+}
+
+function click8() {
+  recordClick(27);
+
+  if (state.isSoiled) {
+    setPlant(plantStage.horror3);
+    setProgressRank('Dark Lord', 'color:blue;text-shadow:0 0 2px black;');
+  }
+  if (!state.isSoiled) {
+    setProgressRank('Farmer', 'color:green;text-shadow:0 0 2px black;');
+  }
+  if (state.multi3Potion && state.isSoiled) {
+    setMultiplier('potion3.png', 'pot3');
+  }
+  if (state.multi3Potion && !state.isSoiled) {
+    setMultiplier('can2.png', 'pot3');
+  }
+
+  setScore('color:blue;font-size:25.6px;text-shadow:0 0 2px royalblue;');
+  animateScore();
+  const timer = document.getElementById('time');
+  timer.setAttribute('data-wow-duration', '2s');
+
+  if (state.boughtMultiplierFlag == 0) {
+    animateDrop(getDrop());
+  }
+  if (state.boughtMultiplierFlag > 7) {
+    stopDropAnimation(getDrop());
+  }
+  state.boughtMultiplierFlag++;
+  state.isolationTicks++;
+  startIsolation(state.isolationTicks, state.divider);
+}
+
+function bindEvents() {
+  addClickHandler(click1);
+  addClickHandler(startTimerOnce);
+
+  dom.cheatButton.addEventListener('click', openCheatModal);
+  dom.cheatApply.addEventListener('click', applyCheatCode);
+  dom.cheatClose.addEventListener('click', closeCheatModal);
+
+  dom.showDevlog.addEventListener('click', showDevlog);
+  dom.closeDevlog.addEventListener('click', closeDevlog);
+  dom.refresh.addEventListener('click', resetWithStatsPrompt);
+  dom.resetFromStats.addEventListener('click', resetPage);
+
+  dom.showStats.addEventListener('click', showStatsModal);
+  dom.closeStats.addEventListener('click', closeStatsModal);
+
+  dom.storeButton.addEventListener('click', showStore);
+  dom.closeStore.addEventListener('click', hideStore);
+  dom.firstStoreCell.addEventListener('click', buyFirstStoreItem);
+  dom.secondStoreCell.addEventListener('click', buySecondStoreItem);
+  dom.thirdStoreCell.addEventListener('click', buyThirdStoreItem);
+}
+
+bindEvents();
