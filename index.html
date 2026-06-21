@@ -15,37 +15,37 @@
 </head>
 <body>
 	<div class="modal_cheat" id="modal_cheat">
-		<div class="modal_store_header">Чит-код
+		<div class="modal_store_header">Cheat code
 			<div class="close_store" id="close_cheat">x</div>
 		</div>
 		<div class="modal_store_body">
 			<div class="forCheat">
-				<p id="cheatP">введите чит-код</p>
+				<p id="cheatP">enter cheat code</p>
 				<input type="text" id="cheatInp">
-				<button id="cheatApp">применить</button>
+				<button id="cheatApp">apply</button>
 			</div>
 		</div>
 	</div>
 	<div class="modal_store" id="modal_store">
-		<div class="modal_store_header">Магазин
+		<div class="modal_store_header">Shop
 			<div class="close_store" id="close_store">x</div>
 		</div>
 		<div class="modal_store_body" id="modal_store_body">
 			<div class="cardstore" id="first_store_cell">
 				<div class="cardstore_img"><img src="#" alt="pic1" id="pic1"></div>
-				<div class="cardstore_name" id="name1">Зелье x3</div>
-				<div class="cardstore_price">Цена: 2 монет</div>
+				<div class="cardstore_name" id="name1">Potion x3</div>
+				<div class="cardstore_price">Price: 2 coins</div>
 			</div>
 			<div class="cardstore" id="second_store_cell">
 				<div class="cardstore_img"><img src="/assets/images/hoe_fullsize.png" alt="pic2"></div>
-				<div class="cardstore_name">Тяпка</div>
-				<div class="cardstore_price">Цена: 7 монет</div>
+				<div class="cardstore_name">Hoe</div>
+				<div class="cardstore_price">Price: 7 coins</div>
 				
 			</div>
 			<div class="cardstore" id="third_store_cell">
 				<div class="cardstore_img"><img src="/assets/images/hl_fullsize.png" alt="pic3"></div>
-				<div class="cardstore_price">Осенняя тема</div>
-				<div class="cardstore_name">Цена: 9 монет</div>
+				<div class="cardstore_price">Autumn theme</div>
+				<div class="cardstore_name">Price: 9 coins</div>
 			</div>
 			<div class="cardstore">
 				<div class="cardstore_img"><img src="/assets/images/soon_Store.png" alt="pic4"></div>
@@ -53,19 +53,19 @@
 				<div class="cardstore_name">---</div>
 			</div>
 		</div>
-		<div class="modal_store_footer">Доступно золотых монет: <span id="nest">  100</span></div>
+		<div class="modal_store_footer">Gold coins available: <span id="nest">  100</span></div>
 	</div>
 	<div class="devlog" id="devlog">
 		<div class="dev_head">
-			Версия 1.1.04
+			Version 1.1.04
 		</div>
-		<div class="dev_h1">Что нового:</div>
+		<div class="dev_h1">What's new:</div>
 		<ul>
-			<li>Добавлен 8-й уровень <i>(новая текстура и увеличение множителя)</i></li>
-			<li>Добавлен магазин</li>
-			<li style="color: red;" title="not yet">Бета-тест системы монет</li>
+			<li>Added the 8th level <i>(new texture and multiplier boost)</i></li>
+			<li>Added the shop</li>
+			<li style="color: red;" title="not yet">Beta test of the coin system</li>
 		</ul>
-		<div class="btn" id="close_devlog">закрыть</div>
+		<div class="btn" id="close_devlog">close</div>
 	</div>
 	<div class="isolation" id="isolation">
 		<div class="progress" id="progress"></div>
@@ -78,38 +78,38 @@
 	</div>
 	<!-- <p id="test"></p> -->
 	<div class="stats" id="stats">
-		<div class="stats_header top">Ваша статистика
+		<div class="stats_header top">Your stats
 			<div class="close_modal" id="close_modal">x</div>
 		</div>
 		<div class="stats_body">
 				<div class="stats_box">
-					<p class="stats_header">Кликов</p>
+					<p class="stats_header">Clicks</p>
 					<p id="stat1">1</p>
 				</div>
 				<div class="stats_box">
-					<p class="stats_header">Время</p>
+					<p class="stats_header">Time</p>
 					<p id="stat2"></p>
 				</div>
 				<div class="stats_box">
-					<p class="stats_header">Счет</p>
+					<p class="stats_header">Score</p>
 					<p id="stat3">3</p>
 				</div>
 				<div class="stats_box">
-					<p class="stats_header">Деньги</p>
+					<p class="stats_header">Gold</p>
 					<p id="stat4">4</p>
 				</div>
 				
 		</div>
 		<div class="stats_btns">
-			<div class="btn" id="refresh_modal">начать заново</div>
-			<div class="btn" id="cheat_modal_open">ввести код</div>
+			<div class="btn" id="refresh_modal">start over</div>
+			<div class="btn" id="cheat_modal_open">enter code</div>
 		</div>
 	</div>
 	<div class="wrap" id="wrap">
 		<div class="forSoil wow bounceIn" id="soil">0%</div>
 		<div class="forScore">
 			<div class="section section1" id="label">
-				Вырасти свою <b>Монстеру</b>
+				Grow your <b>Monstera</b>
 				<div class="new" id="showDevlog">?</div>
 			</div>
 			<div class="section section2 " id="scoreD"> </div>
@@ -126,8 +126,8 @@
 		</div>
 
 		<div class="forNav">
-			<div class="btn" id="show_stat">окно статистики</div>
-			<div class="btn" id="refresh"><span id="re">за</span>ново</div>
+			<div class="btn" id="show_stat">stats window</div>
+			<div class="btn" id="refresh"><span id="re">re</span>start</div>
 			</div>
 	</div>
 	<script src="/vendor/jquery-1.12.js"></script>
