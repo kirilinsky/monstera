@@ -1,6 +1,6 @@
 		
-		const imagePath = (file) => `assets/images/${file}`;
-		const audioPath = (file) => `assets/audio/${file}`;
+		const imagePath = (file) => `/assets/images/${file}`;
+		const audioPath = (file) => `/assets/audio/${file}`;
 
 		/*adm value*/
 		const wrap = document.getElementById('wrap');
