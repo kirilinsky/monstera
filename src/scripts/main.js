@@ -17,44 +17,109 @@ const plantStage = {
   horror4: "4h.png",
 };
 
-const NORMAL_STAGE_8_SCORE = 620;
-const NORMAL_STAGE_9_SCORE = 760;
+// Normal-path stage gates — gaps grow steadily so each rank costs a bit
+// more than the last instead of compressing at the top.
+const NORMAL_STAGE_5_SCORE = 120; // Serious One -> switches to water click3
+const NORMAL_STAGE_6_SCORE = 320; // Broadleaf (lvl 5 span widened)
+const NORMAL_STAGE_7_SCORE = 520; // Giant!
+const NORMAL_STAGE_8_SCORE = 720; // Grand Monstera
+const NORMAL_STAGE_9_SCORE = 1000; // Monstera Prime / soil ready
 const SOIL_READY_SCORE = NORMAL_STAGE_9_SCORE;
+
+// Coins start accruing at level 3 (Young One). The store button and coin
+// are shown from the first click; this is just when the meter begins.
+const COIN_START_SCORE = 30;
+
 const soilProgressPoints = [
   { score: 0, percent: 0 },
-  { score: 19, percent: 5 },
-  { score: 39, percent: 11 },
-  { score: 49, percent: 16 },
-  { score: 71, percent: 24 },
-  { score: 91, percent: 32 },
-  { score: 201, percent: 50 },
-  { score: 295, percent: 65 },
-  { score: 394, percent: 78 },
-  { score: 501, percent: 88 },
-  { score: NORMAL_STAGE_8_SCORE, percent: 96 },
+  { score: 20, percent: 5 },
+  { score: 45, percent: 11 },
+  { score: 85, percent: 18 },
+  { score: NORMAL_STAGE_5_SCORE, percent: 28 },
+  { score: NORMAL_STAGE_6_SCORE, percent: 45 },
+  { score: NORMAL_STAGE_7_SCORE, percent: 65 },
+  { score: NORMAL_STAGE_8_SCORE, percent: 84 },
+  { score: 880, percent: 94 },
   { score: SOIL_READY_SCORE, percent: 100 },
 ];
+
+// Auto potion offers along the normal path (player can also tap the soil).
+const POTION_FIRST_SCORE = 1100;
+const POTION_LAST_SCORE = 2600;
+
+// Dark-path score gates — escalating spacing so the horror run gets
+// heavier toward the Dark Lord instead of front-loading the difficulty.
+const HORROR_ARCHMAGE_SCORE = 1500;
+const HORROR_WARLOCK_SCORE = 1900;
+const HORROR_NECROMANCER_SCORE = 2500;
+const HORROR_DARK_LORD_SCORE = 3600;
+
+// Potion "vials" rendered in the multiplier panel, mirroring the water
+// drops. Count climbs each horror rank and peaks for the Dark Lord.
+const POTION_VIALS = {
+  wizard: 1,
+  archmage: 2,
+  warlock: 3,
+  necromancer: 4,
+  darkLord: 8,
+  darkLordMax: 12,
+};
+
+// Watering cans for the farmer (non-dark) path — same repeated-icon
+// treatment as the drops and potions.
+const CAN_VIALS = {
+  helper: 3,
+  farmer: 6,
+};
 
 const rankProgression = {
   "Tiny Sprout": { level: 1, start: 1, next: 15 },
   "First Leaf": { level: 2, start: 15, next: 30 },
   "Young One": { level: 3, start: 30, next: 60 },
-  Teen: { level: 4, start: 60, next: 111 },
-  "Serious One": { level: 5, start: 111, next: 295 },
-  Broadleaf: { level: 6, start: 295, next: 501 },
-  "Giant!": { level: 7, start: 501, next: NORMAL_STAGE_8_SCORE },
+  Teen: { level: 4, start: 60, next: NORMAL_STAGE_5_SCORE },
+  "Serious One": {
+    level: 5,
+    start: NORMAL_STAGE_5_SCORE,
+    next: NORMAL_STAGE_6_SCORE,
+  },
+  Broadleaf: {
+    level: 6,
+    start: NORMAL_STAGE_6_SCORE,
+    next: NORMAL_STAGE_7_SCORE,
+  },
+  "Giant!": {
+    level: 7,
+    start: NORMAL_STAGE_7_SCORE,
+    next: NORMAL_STAGE_8_SCORE,
+  },
   "Grand Monstera": {
     level: 8,
     start: NORMAL_STAGE_8_SCORE,
     next: NORMAL_STAGE_9_SCORE,
   },
   "Monstera Prime": { level: 9, start: NORMAL_STAGE_9_SCORE, next: null },
-  "Wizard!": { level: 10, start: SOIL_READY_SCORE, next: 1051 },
-  Archmage: { level: 11, start: 1051, next: 2015 },
-  Necromancer: { level: 12, start: 2015, next: 3000 },
-  "Farmer's Helper": { level: 12, start: 2015, next: 3000 },
-  "Dark Lord": { level: 13, start: 3000, next: null },
-  Farmer: { level: 13, start: 3000, next: null },
+  "Wizard!": {
+    level: 10,
+    start: SOIL_READY_SCORE,
+    next: HORROR_ARCHMAGE_SCORE,
+  },
+  Archmage: {
+    level: 11,
+    start: HORROR_ARCHMAGE_SCORE,
+    next: HORROR_NECROMANCER_SCORE,
+  },
+  Necromancer: {
+    level: 12,
+    start: HORROR_NECROMANCER_SCORE,
+    next: HORROR_DARK_LORD_SCORE,
+  },
+  "Farmer's Helper": {
+    level: 12,
+    start: HORROR_NECROMANCER_SCORE,
+    next: HORROR_DARK_LORD_SCORE,
+  },
+  "Dark Lord": { level: 13, start: HORROR_DARK_LORD_SCORE, next: null },
+  Farmer: { level: 13, start: HORROR_DARK_LORD_SCORE, next: null },
 };
 
 const byId = (id) => document.getElementById(id);
@@ -110,7 +175,7 @@ const state = {
   boughtMultiplierFlag: 0,
 };
 
-dom.coinText.innerHTML = 1;
+dom.coinText.innerHTML = 0;
 
 function playAudio(file) {
   const audio = new Audio();
@@ -199,33 +264,52 @@ function animateScore() {
   animatePop(timer, 0.75);
 }
 
-function renderDropImages(count) {
+function renderMultiplierImages(image, count, itemClass) {
   return Array.from(
     { length: count },
     (_, index) => `
-    <img class="section_media multiplier_drop" src="${imagePath("drop.png")}" alt="drop ${index + 1}"${index == 0 ? ' id="drop"' : ""}>
+    <img class="section_media ${itemClass}" src="${imagePath(image)}" alt="${image} ${index + 1}"${index == 0 ? ' id="drop"' : ""}>
   `,
   ).join("");
 }
 
-function setWaterMultiplier(count) {
+// Fixed-size icon box on the left, label + count on the right. The box
+// keeps its dimensions no matter how many icons it holds, so the panel
+// never resizes as the multiplier count changes.
+function renderMultiplierPanel(label, visualHtml, count) {
   dom.multiplier.innerHTML = `
-    <div class="section_panel section_panel--multiplier">
-      <div class="section_label">Your current multiplier</div>
-      <div class="multiplier_drops" aria-label="Water multiplier x${count}">
-        ${renderDropImages(count)}
+    <div class="section_panel section_panel--multiplier" aria-label="${label} x${count}">
+      <div class="multiplier_visual">${visualHtml}</div>
+      <div class="multiplier_info">
+        <div class="section_label">${label}</div>
+        <div class="multiplier_count">×${count}</div>
       </div>
     </div>
   `;
 }
 
-function setMultiplier(image, alt) {
-  dom.multiplier.innerHTML = `
-    <div class="section_panel section_panel--multiplier">
-      <div class="section_label">Your current multiplier</div>
-      <img class="section_media" src="${imagePath(image)}" alt="${alt}" id="drop">
-    </div>
-  `;
+function setWaterMultiplier(count) {
+  renderMultiplierPanel(
+    "Water power",
+    renderMultiplierImages("drop.png", count, "multiplier_drop"),
+    count,
+  );
+}
+
+function setPotionMultiplier(count) {
+  renderMultiplierPanel(
+    "Potion power",
+    renderMultiplierImages("potion.png", count, "multiplier_potion"),
+    count,
+  );
+}
+
+function setCanMultiplier(count) {
+  renderMultiplierPanel(
+    "Watering power",
+    renderMultiplierImages("can1.png", count, "multiplier_can"),
+    count,
+  );
 }
 
 function getDrop() {
@@ -390,6 +474,11 @@ function revealGameUi() {
   dom.multiplier.style.display = "flex";
   dom.rank.style.display = "flex";
 
+  // store + coin live from the very first click
+  dom.isolation.style.opacity = "1";
+  dom.storeButton.style.display = "flex";
+  dom.coin.style.display = "flex";
+
   animateEntrance(dom.score, -20, 0);
   animateEntrance(dom.refresh, 0, 18);
   animateEntrance(dom.showStats, 0, -18);
@@ -401,6 +490,16 @@ function recordClick(amount) {
   state.current += amount;
   state.clicks++;
   playAudio("08368.mp3");
+  tickEconomy();
+}
+
+// Single source of coin generation: from level 3 onward every click feeds
+// the isolation meter, which mints a coin each time it tops out.
+function tickEconomy() {
+  if (state.current < COIN_START_SCORE) return;
+  state.storeEnabled = true;
+  state.isolationTicks++;
+  startIsolation(state.isolationTicks, state.divider);
 }
 
 function startTimerOnce() {
@@ -504,10 +603,10 @@ function click2() {
     stopDropAnimation(getDrop());
   }
 
-  if (state.current >= 91) {
+  if (state.current >= 100) {
     setPlant(plantStage.normal5);
   }
-  if (state.current > 110) {
+  if (state.current >= NORMAL_STAGE_5_SCORE) {
     setPlant(plantStage.normal5);
     dom.block.style.borderRadius = "20px";
     setProgressRank("Serious One");
@@ -518,7 +617,10 @@ function click2() {
 }
 
 function click3() {
-  recordClick(5);
+  // bigger plants hit harder, so the long top end of the normal curve
+  // doesn't turn into an endless +5 grind
+  const gain = state.current >= NORMAL_STAGE_7_SCORE ? 8 : 5;
+  recordClick(gain);
   animateSoil();
 
   setScore();
@@ -533,16 +635,12 @@ function click3() {
   }
   state.drop5Flag++;
 
-  if (state.current >= 295) {
+  if (state.current >= NORMAL_STAGE_6_SCORE) {
     setWaterMultiplier(4);
     setPlant(plantStage.normal6);
     setProgressRank("Broadleaf");
   }
-  if (state.current >= 394) {
-    state.current += 7;
-  }
-  updateSoilProgress();
-  if (state.current > 500) {
+  if (state.current >= NORMAL_STAGE_7_SCORE) {
     setWaterMultiplier(5);
     setPlant(plantStage.normal7);
     setScore("color:green");
@@ -558,29 +656,26 @@ function click3() {
     setPlant(plantStage.normal9);
     setProgressRank("Monstera Prime");
   }
-  if (state.current > 993 && state.confirmationStep == 0) {
+
+  updateSoilProgress();
+
+  if (state.current >= POTION_FIRST_SCORE && state.confirmationStep == 0) {
     state.confirmationStep = 1;
     if (confirm("Use the potion?")) {
       getSoil();
     }
   }
-  if (state.current >= 2355 && state.confirmationStep == 1) {
+  if (state.current >= POTION_LAST_SCORE && state.confirmationStep == 1) {
     state.confirmationStep = 2;
     if (
       confirm(
         "Careful! This is your last chance to use the potion and join the dark side. There will not be another one..",
       )
     ) {
-      getSoil(2366);
+      getSoil(POTION_LAST_SCORE);
     } else {
       dom.soil.style.display = "none";
     }
-  }
-  if (state.current >= 2889) {
-    dom.isolation.style.opacity = "1";
-    state.isolationTicks++;
-    startIsolation(state.isolationTicks, state.divider);
-    state.storeEnabled = true;
   }
 }
 
@@ -588,7 +683,7 @@ function getSoil(score) {
   removeClickHandler(click3);
   setScore("color:red;font-size:25px;");
   setProgressRank("Wizard!", "color:red;");
-  setMultiplier("potion.png", "pot");
+  setPotionMultiplier(POTION_VIALS.wizard);
 
   dom.block.style.borderRadius = "45px";
   dom.block.style.boxShadow = "0 0 50px red";
@@ -622,9 +717,9 @@ function click4() {
 
   setScore("color:red;font-size:25px;");
   animateScore();
-  setMultiplier("potion.png", "pot");
+  setPotionMultiplier(POTION_VIALS.wizard);
 
-  if (state.current >= 1051) {
+  if (state.current >= HORROR_ARCHMAGE_SCORE) {
     replaceClickHandler(click4, click5);
   }
 }
@@ -639,10 +734,11 @@ function click5() {
   if (state.isSoiled) {
     setPlant(plantStage.horror2);
   }
+  setPotionMultiplier(POTION_VIALS.archmage);
   setScore("color:blue;font-size:25px;");
   animateScore();
 
-  if (state.current > 1549) {
+  if (state.current >= HORROR_WARLOCK_SCORE) {
     replaceClickHandler(click5, click6);
   }
 }
@@ -651,7 +747,7 @@ function click6() {
   recordClick(17);
   setScore("color:blue;font-size:25.2px;text-shadow:0 0 1px red;");
   animateScore();
-  setMultiplier("potion2.png", "pot");
+  setPotionMultiplier(POTION_VIALS.warlock);
 
   if (state.potion2Flag == 0) {
     animateDrop(getDrop());
@@ -661,7 +757,7 @@ function click6() {
   }
   state.potion2Flag++;
 
-  if (state.current > 2014) {
+  if (state.current >= HORROR_NECROMANCER_SCORE) {
     replaceClickHandler(click6, click7);
   }
 }
@@ -671,8 +767,15 @@ function click7() {
   dom.soil.style.display = "none";
 
   if (state.isSoiled) {
-    setProgressRank("Necromancer", "color:blue;text-shadow:0 0 2px black;");
-    setPlant(plantStage.horror3);
+    if (state.current >= HORROR_DARK_LORD_SCORE) {
+      setProgressRank("Dark Lord", "color:blue;text-shadow:0 0 2px black;");
+      setPlant(plantStage.horror4);
+      setPotionMultiplier(POTION_VIALS.darkLord);
+    } else {
+      setProgressRank("Necromancer", "color:blue;text-shadow:0 0 2px black;");
+      setPlant(plantStage.horror3);
+      setPotionMultiplier(POTION_VIALS.necromancer);
+    }
   }
   if (!state.isSoiled) {
     setPlant(plantStage.normal9);
@@ -686,13 +789,6 @@ function click7() {
 
   setScore("color:blue;font-size:25.3px;text-shadow:0 0 2px red;");
   animateScore();
-
-  if (state.current >= 3000) {
-    dom.isolation.style.opacity = "1";
-    state.isolationTicks++;
-    startIsolation(state.isolationTicks, state.divider);
-    state.storeEnabled = true;
-  }
 }
 
 function resetPage() {
@@ -846,10 +942,9 @@ const modals = {
     },
     onClose() {
       dom.refresh.style.display = "block";
-      if (state.storeEnabled) {
-        dom.storeButton.style.display = "flex";
-        dom.isolation.style.opacity = "1";
-      }
+      dom.storeButton.style.display = "flex";
+      dom.isolation.style.opacity = "1";
+      dom.coin.style.display = "flex";
     },
   },
 
@@ -886,18 +981,18 @@ const modals = {
         </div>
         <div class="cardstore" id="third_store_cell">
           <div class="cardstore_img"><img src="/assets/images/hl_fullsize.png" alt="pic3"></div>
-          <div class="cardstore_price">Autumn theme</div>
-          <div class="cardstore_name">Price: 9 coins</div>
+          <div class="cardstore_name">Autumn theme</div>
+          <div class="cardstore_price">Price: 9 coins</div>
         </div>
-        <div class="cardstore">
+        <div class="cardstore cardstore--soon">
           <div class="cardstore_img"><img src="/assets/images/soon_Store.png" alt="pic4"></div>
+          <div class="cardstore_name">Coming soon</div>
           <div class="cardstore_price"></div>
-          <div class="cardstore_name">---</div>
         </div>
       </div>
     `,
     footer: () =>
-      `<div class="modal_store_footer">Gold coins available: <span id="nest">0</span></div>`,
+      `<div class="modal_store_footer"><span class="store_gold_label">Gold available</span><span id="nest">0</span></div>`,
     onOpen() {
       const firstImage = byId("pic1");
       const firstName = byId("name1");
@@ -927,7 +1022,7 @@ const modals = {
 
       const gold = byId("nest");
       gold.innerHTML = state.money;
-      gold.style.color = state.money == 0 ? "red" : "green";
+      gold.classList.toggle("nest--empty", state.money == 0);
 
       dom.isolation.style.opacity = "0";
       dom.storeButton.style.display = "none";
@@ -936,7 +1031,7 @@ const modals = {
     onClose() {
       dom.isolation.style.opacity = "1";
       dom.storeButton.style.display = "flex";
-      dom.coin.style.display = state.money == 0 ? "none" : "flex";
+      dom.coin.style.display = "flex";
     },
   },
 };
@@ -993,12 +1088,12 @@ function buyFirstStoreItem() {
   }
   if (state.money >= 2) {
     if (state.isSoiled) {
-      setMultiplier("potion3.png", "pot3");
+      setPotionMultiplier(POTION_VIALS.darkLord);
       setPlant(plantStage.horror4);
       setProgressRank("Dark Lord", "color:blue;text-shadow:0 0 2px black;");
     }
     if (!state.isSoiled) {
-      setMultiplier("can2.png", "pot3");
+      setCanMultiplier(CAN_VIALS.farmer);
       setProgressRank("Farmer", "color:green;text-shadow:0 0 2px black;");
     }
 
@@ -1028,12 +1123,11 @@ function buySecondStoreItem() {
     state.money -= 7;
     dom.coinText.innerHTML = state.money;
 
-    setMultiplier("can2.png", "pot3");
     if (state.multi3Potion) {
       setProgressRank("Farmer", "color:green;text-shadow:0 0 2px black;");
-      setMultiplier("can2.png", "can2");
+      setCanMultiplier(CAN_VIALS.farmer);
     } else {
-      setMultiplier("can1.png", "pot3");
+      setCanMultiplier(CAN_VIALS.helper);
       setProgressRank(
         `Farmer's Helper`,
         "color:green;text-shadow:0 0 2px black;",
@@ -1090,10 +1184,10 @@ function click8() {
     setProgressRank("Farmer", "color:green;text-shadow:0 0 2px black;");
   }
   if (state.multi3Potion && state.isSoiled) {
-    setMultiplier("potion3.png", "pot3");
+    setPotionMultiplier(POTION_VIALS.darkLordMax);
   }
   if (state.multi3Potion && !state.isSoiled) {
-    setMultiplier("can2.png", "pot3");
+    setCanMultiplier(CAN_VIALS.farmer);
   }
 
   setScore("color:blue;font-size:25.6px;text-shadow:0 0 2px royalblue;");
@@ -1106,13 +1200,39 @@ function click8() {
     stopDropAnimation(getDrop());
   }
   state.boughtMultiplierFlag++;
-  state.isolationTicks++;
-  startIsolation(state.isolationTicks, state.divider);
+}
+
+// Native replacement for the old jQuery ink.js plugin: spawn a ripple at
+// the click point, reusing the .ink / boom keyframes from inkdrops.css.
+function spawnRipple(el, event) {
+  const rect = el.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height);
+  const ink = document.createElement("span");
+  ink.className = "ink";
+  ink.style.width = `${size}px`;
+  ink.style.height = `${size}px`;
+  ink.style.left = `${event.clientX - rect.left - size / 2}px`;
+  ink.style.top = `${event.clientY - rect.top - size / 2}px`;
+
+  const color = el.getAttribute("ink-color");
+  if (color) ink.style.backgroundColor = color;
+
+  el.prepend(ink);
+  requestAnimationFrame(() => ink.classList.add("animate"));
+  ink.addEventListener("animationend", () => ink.remove(), { once: true });
+}
+
+function initRipples() {
+  document.querySelectorAll(".inkMe").forEach((el) => {
+    el.addEventListener("click", (event) => spawnRipple(el, event));
+  });
 }
 
 function bindEvents() {
   addClickHandler(click1);
   addClickHandler(startTimerOnce);
+
+  initRipples();
 
   dom.showDevlog.addEventListener("click", () => openModal("devlog"));
   dom.showStats.addEventListener("click", () => openModal("stats"));
