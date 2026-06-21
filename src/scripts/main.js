@@ -1,4 +1,7 @@
 		
+		const imagePath = (file) => `assets/images/${file}`;
+		const audioPath = (file) => `assets/audio/${file}`;
+
 		/*adm value*/
 		const wrap = document.getElementById('wrap');
 		const cheatBtn = document.getElementById('cheat_modal_open');
@@ -134,10 +137,10 @@
 			let timer = document.getElementById('time');
 			timer.classList.toggle('wow');
 			timer.classList.toggle('tada');
-			currentApp.innerHTML = `Ваш<br>текущий<br> множитель<br><img src="drop.png" alt="drop" id="drop">`;
+			currentApp.innerHTML = `Ваш<br>текущий<br> множитель<br><img src="${imagePath('drop.png')}" alt="drop" id="drop">`;
 			
 			if(current >= 1) {
-				plant.src = '1.png';
+				plant.src = imagePath('1.png');
 				let drop = document.getElementById('drop');
 				new WOW().init();
 				drop.classList.add('wow');
@@ -166,7 +169,7 @@
 				} else {
 					name.innerHTML = 'Ваш ранг <br><b>Молодой</b>';
 				}
-				plant.src = '2.png';
+				plant.src = imagePath('2.png');
 			}
 			if(current == 39) {
 				solied = '25%';
@@ -179,7 +182,7 @@
 			if(current > 59) {
 				block.removeEventListener('click', click1);
 				block.addEventListener('click', click2);
-				plant.src = '3.png';
+				plant.src = imagePath('3.png');
 				if(cheater) {
 					name.innerHTML = 'Ваш ранг <br><b>Читер</b>';
 				} else {
@@ -200,7 +203,7 @@
 			let timer = document.getElementById('time');
 			timer.classList.toggle('wow');
 			timer.classList.toggle('tada');
-			currentApp.innerHTML = `Ваш<br> текущий<br> множитель<br><img src="drop2.png" alt="drop2" id="drop">`;
+			currentApp.innerHTML = `Ваш<br> текущий<br> множитель<br><img src="${imagePath('drop2.png')}" alt="drop2" id="drop">`;
 			if(flag2 >= 0) {
 					let drop = document.getElementById('drop');
 					drop.classList.add('wow');
@@ -224,7 +227,7 @@
 				soil.innerHTML = solied;
 			}
 			if(current > 110) {
-				plant.src = '4.png';
+				plant.src = imagePath('4.png');
 				block.style.borderRadius = '20px';
 				if(cheater) {
 					name.innerHTML = 'Ваш ранг <br><b>Читер</b>';
@@ -245,7 +248,7 @@
 			let timer = document.getElementById('time');
 			timer.classList.toggle('wow');
 			timer.classList.toggle('tada');
-			currentApp.innerHTML = `Ваш<br> текущий<br> множитель<br><img src="drop5.png" alt="drop5" id="drop">`;
+			currentApp.innerHTML = `Ваш<br> текущий<br> множитель<br><img src="${imagePath('drop5.png')}" alt="drop5" id="drop">`;
 			if(flag3 == 0) {
 					let drop = document.getElementById('drop');
 					drop.classList.add('wow');
@@ -285,7 +288,7 @@
 				refresh.marginLeft = '56px';
 			}
 			if(current > 500) {
-				plant.src = '5.png';
+				plant.src = imagePath('5.png');
 				scoreD.innerHTML = 'Ваш<br> текущий<br> счет<br><b style="color:green" id="time">' + current + '</b>';
 				block.style.borderRadius = '30px';
 				if(cheater) {
@@ -327,10 +330,10 @@
 			} else {
 				name.innerHTML = 'Ваш ранг<br><b style="color:red;">Волшебник!</b>';
 			}
-			currentApp.innerHTML = `Ваш<br> текущий<br> множитель<br><img src="potion.png" alt="pot" id="drop">`;
+			currentApp.innerHTML = `Ваш<br> текущий<br> множитель<br><img src="${imagePath('potion.png')}" alt="pot" id="drop">`;
 			block.style.borderRadius = '45px';
 			block.style.boxShadow = '0 0 50px red';
-			plant.src = '6.png';
+			plant.src = imagePath('6.png');
 			soiled = '0%';
 			if(flagS == 0) {
 					let drop = document.getElementById('drop');
@@ -369,7 +372,7 @@
 			let timer = document.getElementById('time');
 			timer.classList.toggle('wow');
 			timer.classList.toggle('tada');
-			currentApp.innerHTML = `Ваш<br> текущий<br> множитель<br><img src="potion.png" alt="pot" id="drop">`;
+			currentApp.innerHTML = `Ваш<br> текущий<br> множитель<br><img src="${imagePath('potion.png')}" alt="pot" id="drop">`;
 			if(current >= 1051) {
 				block.removeEventListener('click', click4);
 				block.addEventListener('click', click5);
@@ -405,7 +408,7 @@
 			let timer = document.getElementById('time');
 			timer.classList.toggle('wow');
 			timer.classList.toggle('tada');
-			currentApp.innerHTML = `Ваш<br> текущий<br> множитель<br><img src="potion2.png" alt="pot" id="drop">`;
+			currentApp.innerHTML = `Ваш<br> текущий<br> множитель<br><img src="${imagePath('potion2.png')}" alt="pot" id="drop">`;
 			if(flag6 == 0) {
 					let drop = document.getElementById('drop');
 					drop.classList.add('wow');
@@ -436,10 +439,10 @@
 				} else {
 					name.innerHTML = 'Ваш ранг<br><b style="color:blue;text-shadow:0 0 2px black;">Некромант</b>';
 				}
-				plant.src = '7.png';				
+				plant.src = imagePath('7.png');				
 			}
 			if(!isSoiled){
-				plant.src = '5.png';				
+				plant.src = imagePath('5.png');				
 			}
 			if(!isSoiled && !multi3Potion) {
 				if(cheater) {
@@ -463,7 +466,7 @@
 		/*audio*/
 		function playAudio(file){
 			let myAudio = new Audio;
-			myAudio.src = file;
+			myAudio.src = audioPath(file);
 			myAudio.play();
 		}
 
@@ -586,10 +589,10 @@
 		btn_close_store_modal.addEventListener('click', hideStore);
 		function showStore() {
 			if(isSoiled) {
-				pic1.src = 'potion3_fullsize.png';
+				pic1.src = imagePath('potion3_fullsize.png');
 				name1.innerHTML = 'Зелье x3';
 			}if(!isSoiled) {
-				pic1.src = 'can2_fullsize.png';
+				pic1.src = imagePath('can2_fullsize.png');
 				name1.innerHTML = 'Лейка x2';
 			}
 			store_modal.style.display = 'flex';
@@ -629,14 +632,14 @@
 				alert('Ты слишком беден для этого, подзаработай и возвращайся');
 			} if(money >= 2) {
 				if(isSoiled) {
-					currentApp.innerHTML = `Ваш<br> текущий<br> множитель<br><img src="potion3.png" alt="pot3" id="drop">`;
+					currentApp.innerHTML = `Ваш<br> текущий<br> множитель<br><img src="${imagePath('potion3.png')}" alt="pot3" id="drop">`;
 					if(cheater) {
 						name.innerHTML = 'Ваш ранг <br><b>Читер</b>';
 					} else {
 						name.innerHTML = 'Ваш ранг<br><b style="color:blue;text-shadow:0 0 2px black;">Темный Лорд</b>';
 					}
 				} if(!isSoiled) {
-					currentApp.innerHTML = `Ваш<br> текущий<br> множитель<br><img src="can2.png" alt="pot3" id="drop">`;
+					currentApp.innerHTML = `Ваш<br> текущий<br> множитель<br><img src="${imagePath('can2.png')}" alt="pot3" id="drop">`;
 					if(cheater) {
 						name.innerHTML = 'Ваш ранг <br><b>Читер</b>';
 					} else {
@@ -666,7 +669,7 @@
 			if(!isSoiled) {
 				alert('Кажется, тебе это не нужно!');
 			} if(money >= 7 && isSoiled) {
-				plant.src = '5.png';
+				plant.src = imagePath('5.png');
 				playAudio('buy.mp3');
 				isSoiled = false;
 				secondCell.removeEventListener('click', startFirstCell);
@@ -674,16 +677,16 @@
 				hideStore();
 				money -= 7;
 				moneyTxt.innerHTML = money;
-				currentApp.innerHTML = `Ваш<br> текущий<br> множитель<br><img src="can2.png" alt="pot3" id="drop">`;
+				currentApp.innerHTML = `Ваш<br> текущий<br> множитель<br><img src="${imagePath('can2.png')}" alt="pot3" id="drop">`;
 				if(multi3Potion) {
 					if(cheater) {
 						name.innerHTML = 'Ваш ранг <br><b>Читер</b>';
 					} else {
 						name.innerHTML = 'Ваш ранг<br><b style="color:green;text-shadow:0 0 2px black;">Фермер</b>';
 					}
-					currentApp.innerHTML = `Ваш<br> текущий<br> множитель<br><img src="can2.png" alt="can2" id="drop">`;
+					currentApp.innerHTML = `Ваш<br> текущий<br> множитель<br><img src="${imagePath('can2.png')}" alt="can2" id="drop">`;
 				} else {
-					currentApp.innerHTML = `Ваш<br> текущий<br> множитель<br><img src="can1.png" alt="pot3" id="drop">`;
+					currentApp.innerHTML = `Ваш<br> текущий<br> множитель<br><img src="${imagePath('can1.png')}" alt="pot3" id="drop">`;
 					if(cheater) {
 						name.innerHTML = 'Ваш ранг <br><b>Читер</b>';
 					} else {
@@ -705,7 +708,7 @@
 			if(money >= 9) {
 				for(let i = 0;i < sections.length;i++) {
 					sections[i].style.borderBottom = '17px solid white';
-					sections[i].style.borderImage = 'url(hlbak.png) round round 50';
+					sections[i].style.borderImage = `url(${imagePath('hlbak.png')}) round round 50`;
 				}
 				playAudio('crown.wav');
 				block.removeAttribute('ink-color');
@@ -717,8 +720,8 @@
 				spider.style.display = 'block';
 				showStat.style.background = 'orange';
 				btn_close_store_modal.style.background = 'orange';
-				stat_modal.style.background = 'url(modalStoreBody.png)';
-				store_modal.style.background = 'url(modalStoreBody.png)';
+				stat_modal.style.background = `url(${imagePath('modalStoreBody.png')})`;
+				store_modal.style.background = `url(${imagePath('modalStoreBody.png')})`;
 				for(let x =0;x < modalStoreBody.children.length;x++){
 					modalStoreBody.children[x].style.border = '1px solid grey';
 				}
@@ -757,10 +760,10 @@
 
 			}
 			if(multi3Potion && isSoiled) {
-				currentApp.innerHTML = `Ваш<br> текущий<br> множитель<br><img src="potion3.png" alt="pot3" id="drop">`;
+				currentApp.innerHTML = `Ваш<br> текущий<br> множитель<br><img src="${imagePath('potion3.png')}" alt="pot3" id="drop">`;
 			}
 			if(multi3Potion && !isSoiled) {
-				currentApp.innerHTML = `Ваш<br> текущий<br> множитель<br><img src="can2.png" alt="pot3" id="drop">`;
+				currentApp.innerHTML = `Ваш<br> текущий<br> множитель<br><img src="${imagePath('can2.png')}" alt="pot3" id="drop">`;
 			}
 			
 			scoreD.innerHTML = 'Ваш<br> текущий<br> счет<br><b  id="time" style="color:blue;font-size:25.6px;text-shadow:0 0 2px royalblue;">' + current + '</b>';

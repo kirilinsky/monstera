@@ -120,7 +120,7 @@ body{
 			position: absolute;
 			width: 100%;
 			height: 100%;
-			background: url(spoder.png) 25px 100%;
+			background: url(../../assets/images/spoder.png) 25px 100%;
 			bottom: 2px;
 			left: 0;
 			background-size: 79%;
@@ -446,7 +446,7 @@ body{
 		}
 		.money {
 			position:absolute;
-			background: url(coin.png);
+			background: url(../../assets/images/coin.png);
 			background-size: contain;
 			width: 82px;
 			height: 82px;
@@ -472,7 +472,7 @@ body{
 		}
 		.store {
 			position:absolute;
-			background: url(order.png) 0px 3px no-repeat;
+			background: url(../../assets/images/order.png) 0px 3px no-repeat;
 			background-size: cover;
 			width: 72px;
 			height: 72px;
