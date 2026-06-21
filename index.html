@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta property="og:type" content="article" />
+    <meta property="og:title" content="GrowUp Your Own MONSTER'a!" />
+    <meta property="og:description" content="Click and fill your plant" />
+    <meta property="og:image" content="og.jpg" />
+	<title>MonsterA!</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<link rel="stylesheet" href="main.css">
+	<link rel="stylesheet" href="animate.css">
+	<link rel="stylesheet" href="inkdrops.css">
+	<link rel="icon" href="fav.png" type="icon/png">
+</head>
+<body>
+	<div class="modal_cheat" id="modal_cheat">
+		<div class="modal_store_header">Чит-код
+			<div class="close_store" id="close_cheat">x</div>
+		</div>
+		<div class="modal_store_body">
+			<div class="forCheat">
+				<p id="cheatP">введите чит-код</p>
+				<input type="text" id="cheatInp">
+				<button id="cheatApp">применить</button>
+			</div>
+		</div>
+	</div>
+	<div class="modal_store" id="modal_store">
+		<div class="modal_store_header">Магазин
+			<div class="close_store" id="close_store">x</div>
+		</div>
+		<div class="modal_store_body" id="modal_store_body">
+			<div class="cardstore" id="first_store_cell">
+				<div class="cardstore_img"><img src="#" alt="pic1" id="pic1"></div>
+				<div class="cardstore_name" id="name1">Зелье x3</div>
+				<div class="cardstore_price">Цена: 2 монет</div>
+			</div>
+			<div class="cardstore" id="second_store_cell">
+				<div class="cardstore_img"><img src="hoe_fullsize.png" alt="pic2"></div>
+				<div class="cardstore_name">Тяпка</div>
+				<div class="cardstore_price">Цена: 7 монет</div>
+				
+			</div>
+			<div class="cardstore" id="third_store_cell">
+				<div class="cardstore_img"><img src="hl_fullsize.png" alt="pic3"></div>
+				<div class="cardstore_price">Осенняя тема</div>
+				<div class="cardstore_name">Цена: 9 монет</div>
+			</div>
+			<div class="cardstore">
+				<div class="cardstore_img"><img src="soon_Store.png" alt="pic4"></div>
+				<div class="cardstore_price"></div>
+				<div class="cardstore_name">---</div>
+			</div>
+		</div>
+		<div class="modal_store_footer">Доступно золотых монет: <span id="nest">  100</span></div>
+	</div>
+	<div class="devlog" id="devlog">
+		<div class="dev_head">
+			Версия 1.1.04
+		</div>
+		<div class="dev_h1">Что нового:</div>
+		<ul>
+			<li>Добавлен 8-й уровень <i>(новая текстура и увеличение множителя)</i></li>
+			<li>Добавлен магазин</li>
+			<li style="color: red;" title="not yet">Бета-тест системы монет</li>
+		</ul>
+		<div class="btn" id="close_devlog">закрыть</div>
+	</div>
+	<div class="isolation" id="isolation">
+		<div class="progress" id="progress"></div>
+		<div class="money" id="money">
+			<div class="money_wrap">
+				<div class="money_txt" id="money_txt">1</div>
+			</div>
+		</div>
+		<div class="store" id="btnStore"></div>
+	</div>
+	<!-- <p id="test"></p> -->
+	<div class="stats" id="stats">
+		<div class="stats_header top">Ваша статистика
+			<div class="close_modal" id="close_modal">x</div>
+		</div>
+		<div class="stats_body">
+				<div class="stats_box">
+					<p class="stats_header">Кликов</p>
+					<p id="stat1">1</p>
+				</div>
+				<div class="stats_box">
+					<p class="stats_header">Время</p>
+					<p id="stat2"></p>
+				</div>
+				<div class="stats_box">
+					<p class="stats_header">Счет</p>
+					<p id="stat3">3</p>
+				</div>
+				<div class="stats_box">
+					<p class="stats_header">Деньги</p>
+					<p id="stat4">4</p>
+				</div>
+				
+		</div>
+		<div class="stats_btns">
+			<div class="btn" id="refresh_modal">начать заново</div>
+			<div class="btn" id="cheat_modal_open">ввести код</div>
+		</div>
+	</div>
+	<div class="wrap" id="wrap">
+		<div class="forSoil wow bounceIn" id="soil">0%</div>
+		<div class="forScore">
+			<div class="section section1" id="label">
+				Вырасти свою <b>Монстеру</b>
+				<div class="new" id="showDevlog">?</div>
+			</div>
+			<div class="section section2 " id="scoreD"> </div>
+			<div class="section section3" id="name" data-ripple></div>
+			<div class="section section4" id="currentApp"></div>
+		</div>
+		<div class="forPlay">
+			<div class="canvas">
+				<div class="block inkMe" ink-color="#57dbeb" id="block">
+					<img src="0.png" alt="zero" id="plant">
+					<div class="spider" id="spider"></div>
+				</div>
+			</div>
+		</div>
+
+		<div class="forNav">
+			<div class="btn" id="show_stat">окно статистики</div>
+			<div class="btn" id="refresh"><span id="re">за</span>ново</div>
+			</div>
+	</div>
+	<script async src="main.js"></script>
+	<script src="jq1_12.js"></script>
+	<script src="wow.min.js"></script>
+	<script src="ink.js"></script>
+</body>
+</html>
