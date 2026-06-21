@@ -2,31 +2,56 @@ const imagePath = (file) => `/assets/images/${file}`;
 const audioPath = (file) => `/assets/audio/${file}`;
 
 const plantStage = {
-  normal1: '1.png',
-  normal2: '2.png',
-  normal3: '3.png',
-  normal4: '4.png',
-  normal5: '5.png',
-  normal6: '6.png',
-  normal7: '7.png',
-  horror1: '8.png',
-  horror2: '9.png',
-  horror3: '10.png',
+  normal1: '1a.png',
+  normal2: '2a.png',
+  normal3: '3a.png',
+  normal4: '4a.png',
+  normal5: '5a.png',
+  normal6: '6a.png',
+  normal7: '7a.png',
+  normal8: '7a.png',
+  normal9: '9a.png',
+  horror1: '1h.png',
+  horror2: '2h.png',
+  horror3: '3h.png',
+  horror4: '4h.png',
 };
 
-const SOIL_READY_SCORE = 544;
+const NORMAL_STAGE_8_SCORE = 620;
+const NORMAL_STAGE_9_SCORE = 760;
+const SOIL_READY_SCORE = NORMAL_STAGE_9_SCORE;
 const soilProgressPoints = [
   { score: 0, percent: 0 },
-  { score: 19, percent: 10 },
-  { score: 39, percent: 25 },
-  { score: 49, percent: 35 },
-  { score: 71, percent: 50 },
-  { score: 91, percent: 65 },
-  { score: 201, percent: 75 },
-  { score: 295, percent: 95 },
-  { score: 394, percent: 99 },
+  { score: 19, percent: 5 },
+  { score: 39, percent: 11 },
+  { score: 49, percent: 16 },
+  { score: 71, percent: 24 },
+  { score: 91, percent: 32 },
+  { score: 201, percent: 50 },
+  { score: 295, percent: 65 },
+  { score: 394, percent: 78 },
+  { score: 501, percent: 88 },
+  { score: NORMAL_STAGE_8_SCORE, percent: 96 },
   { score: SOIL_READY_SCORE, percent: 100 },
 ];
+
+const rankProgression = {
+  'Tiny Sprout': { level: 1, start: 1, next: 15 },
+  'First Leaf': { level: 2, start: 15, next: 30 },
+  'Young One': { level: 3, start: 30, next: 60 },
+  Teen: { level: 4, start: 60, next: 111 },
+  'Serious One': { level: 5, start: 111, next: 295 },
+  Broadleaf: { level: 6, start: 295, next: 501 },
+  'Giant!': { level: 7, start: 501, next: NORMAL_STAGE_8_SCORE },
+  'Grand Monstera': { level: 8, start: NORMAL_STAGE_8_SCORE, next: NORMAL_STAGE_9_SCORE },
+  'Monstera Prime': { level: 9, start: NORMAL_STAGE_9_SCORE, next: null },
+  'Wizard!': { level: 10, start: SOIL_READY_SCORE, next: 1051 },
+  Archmage: { level: 11, start: 1051, next: 2015 },
+  Necromancer: { level: 12, start: 2015, next: 3000 },
+  "Farmer's Helper": { level: 12, start: 2015, next: 3000 },
+  'Dark Lord': { level: 13, start: 3000, next: null },
+  Farmer: { level: 13, start: 3000, next: null },
+};
 
 const dom = {
   wrap: document.getElementById('wrap'),
@@ -85,6 +110,7 @@ const state = {
   money: 0,
   startTime: null,
   soilText: '',
+  currentRank: null,
 
   cheater: false,
   isSoiled: false,
@@ -106,16 +132,70 @@ const state = {
 
 dom.coinText.innerHTML = 1;
 
-function initWow() {
-  if (window.WOW) {
-    new window.WOW().init();
-  }
-}
-
 function playAudio(file) {
   const audio = new Audio();
   audio.src = audioPath(file);
   audio.play();
+}
+
+function animateElement(element, keyframes, options) {
+  if (!element || !element.animate || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    return null;
+  }
+
+  return element.animate(keyframes, {
+    duration: 240,
+    easing: 'cubic-bezier(.2,.8,.2,1)',
+    fill: 'none',
+    ...options,
+  });
+}
+
+function animateEntrance(element, x = 0, y = 0) {
+  return animateElement(
+    element,
+    [
+      { opacity: 0, transform: `translate3d(${x}px, ${y}px, 0) scale(0.96)` },
+      { opacity: 1, transform: 'translate3d(0, 0, 0) scale(1)' },
+    ],
+    { duration: 420, easing: 'cubic-bezier(.16,1,.3,1)' },
+  );
+}
+
+function animatePop(element, intensity = 1) {
+  return animateElement(
+    element,
+    [
+      { transform: 'scale(1)' },
+      { transform: `scale(${1 + 0.08 * intensity})` },
+      { transform: 'scale(1)' },
+    ],
+    { duration: 220 },
+  );
+}
+
+function animateSoil() {
+  return animateElement(
+    dom.soil,
+    [
+      { transform: 'translate3d(0, 0, 0) scale(1)' },
+      { transform: 'translate3d(0, -2px, 0) scale(1.025)' },
+      { transform: 'translate3d(0, 0, 0) scale(1)' },
+    ],
+    { duration: 260, easing: 'cubic-bezier(.25,.9,.25,1)' },
+  );
+}
+
+function animateCoin() {
+  return animateElement(
+    dom.coin,
+    [
+      { transform: 'scale(0.86) rotate(-4deg)' },
+      { transform: 'scale(1.08) rotate(3deg)' },
+      { transform: 'scale(1) rotate(0deg)' },
+    ],
+    { duration: 480, easing: 'cubic-bezier(.16,1,.3,1)' },
+  );
 }
 
 function setScore(style = '') {
@@ -126,16 +206,33 @@ function setScore(style = '') {
       <div class="section_value" id="time"${styleAttribute}>${state.current}</div>
     </div>
   `;
+  renderRankDisplay();
 }
 
 function animateScore() {
   const timer = document.getElementById('time');
   if (!timer) return;
-  timer.classList.toggle('wow');
-  timer.classList.toggle('tada');
+  animatePop(timer, 0.75);
 }
 
-function setMultiplier(image, alt, compact = false) {
+function renderDropImages(count) {
+  return Array.from({ length: count }, (_, index) => `
+    <img class="section_media multiplier_drop" src="${imagePath('drop.png')}" alt="drop ${index + 1}"${index == 0 ? ' id="drop"' : ''}>
+  `).join('');
+}
+
+function setWaterMultiplier(count) {
+  dom.multiplier.innerHTML = `
+    <div class="section_panel section_panel--multiplier">
+      <div class="section_label">Your current multiplier</div>
+      <div class="multiplier_drops" aria-label="Water multiplier x${count}">
+        ${renderDropImages(count)}
+      </div>
+    </div>
+  `;
+}
+
+function setMultiplier(image, alt) {
   dom.multiplier.innerHTML = `
     <div class="section_panel section_panel--multiplier">
       <div class="section_label">Your current multiplier</div>
@@ -150,30 +247,77 @@ function getDrop() {
 
 function animateDrop(drop) {
   if (!drop) return;
-  drop.classList.add('wow');
-  drop.classList.add('tada');
-  drop.setAttribute('data-wow-duration', '2s');
+  animateElement(
+    drop,
+    [
+      { transform: 'scale(1) rotate(0deg)' },
+      { transform: 'scale(1.16) rotate(-4deg)' },
+      { transform: 'scale(1) rotate(0deg)' },
+    ],
+    { duration: 360, easing: 'cubic-bezier(.16,1,.3,1)' },
+  );
 }
 
 function stopDropAnimation(drop) {
   if (!drop) return;
-  drop.classList.remove('wow');
-  drop.classList.remove('tada');
-  drop.removeAttribute('data-wow-duration');
+  drop.getAnimations().forEach((animation) => animation.cancel());
 }
 
-function setRank(rank, style = '') {
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function getRankProgress(rank) {
+  const meta = rankProgression[rank] ?? {
+    level: '?',
+    start: state.currentRank?.startScore ?? state.current,
+    next: null,
+  };
+
+  if (!meta.next || meta.next <= meta.start) {
+    return { meta, percent: 100, label: 'Max level' };
+  }
+
+  const rawPercent = ((state.current - meta.start) / (meta.next - meta.start)) * 100;
+  const percent = clamp(Math.round(rawPercent), 0, 100);
+  return { meta, percent, label: `${percent}% to ${meta.next}` };
+}
+
+function renderRankDisplay() {
+  if (!state.currentRank) return;
+
+  const { name, style } = state.currentRank;
   const styleAttribute = style ? ` style="${style}"` : '';
+  const displayName = state.cheater ? 'Cheater' : name;
+  const { meta, percent, label } = getRankProgress(name);
+
   dom.rank.innerHTML = `
-    <div class="section_panel">
+    <div class="section_panel section_panel--rank">
       <div class="section_label">Your rank</div>
-      <div class="section_value section_value--rank"${styleAttribute}>${rank}</div>
+      <div class="rank_header">
+        <span class="rank_level">Lvl ${meta.level}</span>
+        <span class="section_value section_value--rank"${styleAttribute}>${displayName}</span>
+      </div>
+      <div class="rank_progress" aria-label="Rank progress">
+        <div class="rank_progress_bar" style="width:${percent}%"></div>
+      </div>
+      <div class="rank_progress_label">${label}</div>
     </div>
   `;
 }
 
+function setRank(rank, style = '') {
+  const knownStart = rankProgression[rank]?.start ?? state.current;
+  state.currentRank = {
+    name: rank,
+    style,
+    startScore: knownStart,
+  };
+  renderRankDisplay();
+}
+
 function setProgressRank(rank, style = '') {
-  setRank(state.cheater ? 'Cheater' : rank, style);
+  setRank(rank, style);
 }
 
 function setSoil(text) {
@@ -246,24 +390,16 @@ function revealGameUi() {
   dom.label.style.display = 'none';
   dom.showStats.style.display = 'block';
 
-  dom.score.classList.add('wow', 'fadeInLeft');
-  dom.refresh.classList.add('wow', 'slideInUp');
-  dom.showStats.classList.add('wow', 'slideInDown');
-  dom.multiplier.classList.add('wow', 'fadeInRight');
-  dom.rank.classList.add('wow', 'fadeInDown');
-
   dom.score.style.display = 'flex';
   dom.refresh.style.display = 'block';
   dom.multiplier.style.display = 'flex';
   dom.rank.style.display = 'flex';
-}
 
-function clearIntroAnimations() {
-  dom.score.classList.remove('wow', 'fadeInLeft');
-  dom.refresh.classList.remove('wow', 'slideInUp');
-  dom.showStats.classList.remove('wow', 'slideInDown');
-  dom.multiplier.classList.remove('wow', 'fadeInRight');
-  dom.rank.classList.remove('wow', 'fadeInDown');
+  animateEntrance(dom.score, -20, 0);
+  animateEntrance(dom.refresh, 0, 18);
+  animateEntrance(dom.showStats, 0, -18);
+  animateEntrance(dom.multiplier, 20, 0);
+  animateEntrance(dom.rank, 0, -18);
 }
 
 function recordClick(amount) {
@@ -295,6 +431,7 @@ function applyCheatCode() {
       dom.cheatInput.value = '';
       setScore();
       state.cheater = true;
+      renderRankDisplay();
       playAudio('buuu.mp3');
     }
   } if (dom.cheatInput.value == 'moneymaker') {
@@ -308,6 +445,7 @@ function applyCheatCode() {
       dom.coin.style.display = 'flex';
       dom.coinText.innerHTML = state.money;
       state.cheater = true;
+      renderRankDisplay();
       playAudio('buuu.mp3');
     }
   } else {
@@ -326,25 +464,20 @@ function click1() {
 
   if (state.animationFlag == 0 && state.current == 1) {
     revealGameUi();
-  } else {
-    clearIntroAnimations();
   }
 
   state.animationFlag++;
-  initWow();
   dom.soil.style.display = 'flex';
-  dom.soil.classList.toggle('wow');
+  animateSoil();
 
   setScore();
   animateScore();
-  setMultiplier('drop.png', 'drop', true);
+  setWaterMultiplier(1);
 
   const drop = getDrop();
   if (state.current >= 1) {
     setPlant(plantStage.normal1);
-    initWow();
     animateDrop(drop);
-    drop.setAttribute('data-wow-iteration', '2');
     setProgressRank('Tiny Sprout');
     dom.showStats.style.display = 'block';
   }
@@ -371,13 +504,13 @@ function click1() {
 function click2() {
   recordClick(2);
   state.animationFlag = '';
-  dom.soil.classList.toggle('wow');
+  animateSoil();
 
   setScore();
   animateScore();
-  setMultiplier('drop2.png', 'drop2');
+  setWaterMultiplier(2);
 
-  if (state.drop2Flag >= 0) {
+  if (state.drop2Flag < 3) {
     animateDrop(getDrop());
   }
   state.drop2Flag++;
@@ -400,11 +533,11 @@ function click2() {
 
 function click3() {
   recordClick(5);
-  dom.soil.classList.toggle('wow');
+  animateSoil();
 
   setScore();
   animateScore();
-  setMultiplier('drop5.png', 'drop5');
+  setWaterMultiplier(3);
 
   if (state.drop5Flag == 0) {
     animateDrop(getDrop());
@@ -415,6 +548,7 @@ function click3() {
   state.drop5Flag++;
 
   if (state.current >= 295) {
+    setWaterMultiplier(4);
     setPlant(plantStage.normal6);
     setProgressRank('Broadleaf');
   }
@@ -423,10 +557,20 @@ function click3() {
   }
   updateSoilProgress();
   if (state.current > 500) {
+    setWaterMultiplier(5);
     setPlant(plantStage.normal7);
     setScore('color:green');
     dom.block.style.borderRadius = '30px';
     setProgressRank('Giant!');
+  }
+  if (state.current >= NORMAL_STAGE_8_SCORE) {
+    setPlant(plantStage.normal8);
+    setProgressRank('Grand Monstera');
+  }
+  if (state.current >= NORMAL_STAGE_9_SCORE) {
+    setWaterMultiplier(6);
+    setPlant(plantStage.normal9);
+    setProgressRank('Monstera Prime');
   }
   if (state.current > 993 && state.confirmationStep == 0) {
     state.confirmationStep = 1;
@@ -478,8 +622,7 @@ function getSoil(score) {
   dom.soil.removeEventListener('click', getSoil);
   dom.soil.style.textDecoration = 'line-through';
   dom.soil.classList.remove('getSoil');
-  dom.soil.classList.toggle('wow');
-  dom.soil.classList.toggle('pulse');
+  animateSoil();
   state.isSoiled = true;
 }
 
@@ -503,6 +646,9 @@ function click5() {
   dom.rank.style.width = '68%';
 
   setProgressRank('Archmage', 'color:blue;');
+  if (state.isSoiled) {
+    setPlant(plantStage.horror2);
+  }
   setScore('color:blue;font-size:25px;');
   animateScore();
 
@@ -536,10 +682,10 @@ function click7() {
 
   if (state.isSoiled) {
     setProgressRank('Necromancer', 'color:blue;text-shadow:0 0 2px black;');
-    setPlant(plantStage.horror2);
+    setPlant(plantStage.horror3);
   }
   if (!state.isSoiled) {
-    setPlant(plantStage.normal7);
+    setPlant(plantStage.normal9);
   }
   if (!state.isSoiled && !state.multi3Potion) {
     setProgressRank(`Farmer's Helper`, 'color:green;text-shadow:0 0 2px black;');
@@ -547,8 +693,6 @@ function click7() {
 
   setScore('color:blue;font-size:25.3px;text-shadow:0 0 2px red;');
   animateScore();
-  const timer = document.getElementById('time');
-  timer.setAttribute('data-wow-duration', '2s');
 
   if (state.current >= 3000) {
     dom.isolation.style.opacity = '1';
@@ -591,12 +735,10 @@ function startIsolation(num, divider) {
     return;
   }
 
-  initWow();
   dom.progress.style.height = '100%';
   dom.progress.style.transform = 'scale(1.1)';
   dom.coin.style.display = 'flex';
-  dom.coin.classList.add('wow', 'rubberBand');
-  dom.coin.setAttribute('data-wow-duration', '2s');
+  animateCoin();
 
   state.money++;
   state.divider += 0.13;
@@ -691,7 +833,7 @@ function buyFirstStoreItem() {
   } if (state.money >= 2) {
     if (state.isSoiled) {
       setMultiplier('potion3.png', 'pot3');
-      setPlant(plantStage.horror3);
+      setPlant(plantStage.horror4);
       setProgressRank('Dark Lord', 'color:blue;text-shadow:0 0 2px black;');
     } if (!state.isSoiled) {
       setMultiplier('can2.png', 'pot3');
@@ -717,7 +859,7 @@ function buySecondStoreItem() {
   if (!state.isSoiled) {
     alert('Looks like you do not need this!');
   } if (state.money >= 7 && state.isSoiled) {
-    setPlant(plantStage.normal7);
+    setPlant(plantStage.normal9);
     playAudio('buy.mp3');
     state.isSoiled = false;
     dom.secondStoreCell.removeEventListener('click', buySecondStoreItem);
@@ -780,7 +922,7 @@ function click8() {
   recordClick(27);
 
   if (state.isSoiled) {
-    setPlant(plantStage.horror3);
+    setPlant(plantStage.horror4);
     setProgressRank('Dark Lord', 'color:blue;text-shadow:0 0 2px black;');
   }
   if (!state.isSoiled) {
@@ -795,8 +937,6 @@ function click8() {
 
   setScore('color:blue;font-size:25.6px;text-shadow:0 0 2px royalblue;');
   animateScore();
-  const timer = document.getElementById('time');
-  timer.setAttribute('data-wow-duration', '2s');
 
   if (state.boughtMultiplierFlag == 0) {
     animateDrop(getDrop());

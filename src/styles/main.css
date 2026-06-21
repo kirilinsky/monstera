@@ -74,7 +74,9 @@
 			user-select: none;
 			font-weight: bold;
 			line-height: 1;
-			transition: transform 0.24s ease, box-shadow 0.24s ease, background 0.24s ease;
+			transform-origin: center;
+			will-change: transform;
+			transition: transform 0.34s cubic-bezier(.16, 1, .3, 1), box-shadow 0.28s ease, background 0.28s ease;
 		}
 		.soil_percent {
 			display: block;
@@ -152,6 +154,22 @@
 		.section_panel--multiplier {
 			gap: 3px;
 		}
+		.multiplier_drops {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 2px;
+			max-width: 100%;
+			min-width: 0;
+		}
+		.multiplier_drop {
+			width: 18px;
+			height: 42px;
+			flex: 0 0 auto;
+		}
+		.section_panel--rank {
+			gap: 4px;
+		}
 		.section_label {
 			max-width: 100%;
 			color: var(--muted);
@@ -173,6 +191,53 @@
 		.section_value--rank {
 			font-size: 20px;
 		}
+		.section_panel--rank .section_value--rank {
+			font-size: 16px;
+			line-height: 1;
+		}
+		.rank_header {
+			max-width: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 6px;
+			line-height: 1;
+			flex-wrap: wrap;
+		}
+		.rank_level {
+			padding: 2px 6px;
+			border-radius: 999px;
+			background: rgba(47, 158, 109, 0.14);
+			color: var(--leaf-dark);
+			font-size: 11px;
+			font-weight: 900;
+			line-height: 1;
+			white-space: nowrap;
+		}
+		.rank_progress {
+			width: min(92%, 168px);
+			height: 6px;
+			overflow: hidden;
+			border-radius: 999px;
+			background: rgba(23, 104, 75, 0.13);
+			box-shadow: inset 0 1px 3px rgba(23, 104, 75, 0.18);
+		}
+		.rank_progress_bar {
+			height: 100%;
+			border-radius: inherit;
+			background: linear-gradient(90deg, var(--mint), var(--leaf));
+			box-shadow: 0 0 12px rgba(87, 219, 235, 0.4);
+			transition: width 0.24s cubic-bezier(.16, 1, .3, 1);
+		}
+		.rank_progress_label {
+			max-width: 100%;
+			color: var(--muted);
+			font-size: 10px;
+			font-weight: 700;
+			line-height: 1;
+			letter-spacing: 0.2px;
+			overflow-wrap: anywhere;
+		}
 		.section:hover {
 			border-color: rgba(47, 158, 109, 0.58);
 			border-radius: 8px;
@@ -181,17 +246,20 @@
 			box-shadow: 0 16px 34px rgba(23, 104, 75, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.9);
 		}
 		.block#block {
-			width: 227px;
-			height: auto;
+			width: min(300px, 72vw);
+			min-height: 330px;
 			background: linear-gradient(145deg, var(--mint), #87f3df);
 			border-radius: 8px;
 			box-shadow: 0 16px 38px rgba(87, 219, 235, 0.34), 0 3px 0 rgba(23, 104, 75, 0.18);
 			border: none;
 			transition: transform 0.12s ease, box-shadow 0.2s ease, filter 0.2s ease, background 0.2s ease;
-			padding-left: 1px;
+			padding: 10px;
 			z-index: 1000;
 			position:relative;
 			will-change: transform;
+			display: flex;
+			align-items: center;
+			justify-content: center;
 		}
 		.block#block:hover {
 			background: linear-gradient(145deg, #a9f6df, #e7fff2);
@@ -206,8 +274,12 @@
 		}
 		#plant {
 			z-index: 505;
-			max-width: 100%;
-			max-height: 100%;
+			display: block;
+			width: 100%;
+			height: 100%;
+			max-height: 430px;
+			object-fit: contain;
+			object-position: center;
 		}
 		.spider {
 			display: none;
@@ -283,7 +355,7 @@
 		.getSoil {
 			background: radial-gradient(circle, #ff3b3b 0%, var(--danger) 48%, var(--danger-dark) 100%) !important;
 			box-shadow: var(--shadow-horror) !important;
-			animation: horrorPulse 1.1s ease-in-out infinite;
+			animation: soilReadyPulse 1.65s ease-in-out infinite;
 			transition: transform 0.16s ease, box-shadow 0.16s ease;
 		}
 		.getSoil:hover {
@@ -464,37 +536,81 @@
 			left:10%;
 			border-radius: 8px;
 			box-sizing: border-box;
-			padding:25px;
+			padding:24px;
 			display: none;
-			justify-content: space-around;
-			align-items: flex-start;
+			justify-content: center;
+			align-items: stretch;
 			flex-direction: column;
+			gap: 14px;
 			color: black;
 			box-shadow: 0 24px 58px rgba(23, 104, 75, 0.22);
 		}
 		.dev_head {
-			background: rgba(255, 255, 255, 0.92);
-			padding:4px 5px;
+			width: fit-content;
+			background: rgba(255, 255, 255, 0.72);
+			padding: 4px 8px;
+			border-radius: 999px;
 			position:relative;
+			color: var(--leaf-dark);
+			font-size: 13px;
+			font-weight: 800;
+			letter-spacing: 0.8px;
+			text-transform: uppercase;
 		}
 		.dev_h1 {
-			background: rgba(255, 255, 255, 0.92);
-			padding:10px;
-			font-size: 45.6px;
+			max-width: 560px;
+			padding: 0;
+			color: var(--ink);
+			font-size: 30px;
+			font-weight: 900;
+			line-height: 1;
 		}
-		ul {
-			background: rgba(255, 255, 255, 0.92);
-			padding:15px;
-			list-style-position: inside;
+		.devlog_sections {
+			display: flex;
+			flex-direction: column;
+			gap: 12px;
+		}
+		.devlog_card {
+			min-width: 0;
+			padding: 14px;
+			border-radius: 8px;
+			background: rgba(255, 255, 255, 0.82);
+			box-shadow: 0 12px 22px rgba(23, 104, 75, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+		}
+		.devlog_card h2 {
+			margin: 0 0 8px;
+			color: var(--leaf-dark);
+			font-size: 17px;
+			line-height: 1;
+		}
+		.devlog_card p {
+			margin: 0 0 8px;
+			color: var(--ink);
+			font-size: 14px;
+			line-height: 1.35;
+		}
+		.devlog_card p:last-child {
+			margin-bottom: 0;
+		}
+		.devlog_card ul {
+			margin: 0;
+			padding-left: 18px;
+			list-style-position: outside;
 			list-style-type: square;
 		}
-		li {
-			margin:5px;
-			font-size: 18.1px;
+		.devlog_card li {
+			margin: 0 0 6px;
+			color: var(--ink);
+			font-size: 14px;
+			line-height: 1.25;
+		}
+		.devlog_card li:last-child {
+			margin-bottom: 0;
 		}
 		.btn#close_devlog {
+			align-self: flex-start;
 			background: white;
-			padding:9px;
+			padding: 8px 14px;
 			transition: all 0.2s ease-in;
 		}
 		.btn#close_devlog:hover {
@@ -823,6 +939,17 @@
 			50% {
 				filter: saturate(1.35);
 				box-shadow: 0 0 36px rgba(214, 40, 40, 0.72), 0 0 96px rgba(58, 7, 16, 0.3);
+			}
+		}
+
+		@keyframes soilReadyPulse {
+			0%, 100% {
+				filter: saturate(1);
+				box-shadow: var(--shadow-horror);
+			}
+			50% {
+				filter: saturate(1.16);
+				box-shadow: 0 0 32px rgba(214, 40, 40, 0.62), 0 0 80px rgba(58, 7, 16, 0.24);
 			}
 		}
 

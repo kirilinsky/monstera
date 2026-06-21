@@ -9,7 +9,6 @@
 	<title>MonsterA!</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 	<link rel="stylesheet" href="src/styles/main.css">
-	<link rel="stylesheet" href="/vendor/animate.css">
 	<link rel="stylesheet" href="src/styles/inkdrops.css">
 	<link rel="icon" href="/assets/images/fav.png" type="icon/png">
 </head>
@@ -56,15 +55,24 @@
 		<div class="modal_store_footer">Gold coins available: <span id="nest">  100</span></div>
 	</div>
 	<div class="devlog" id="devlog">
-		<div class="dev_head">
-			Version 1.1.04
+		<div class="dev_head">Monstera 2026 refresh</div>
+		<div class="dev_h1">Grow it. Feed it. See what happens.</div>
+		<div class="devlog_sections">
+			<section class="devlog_card">
+				<h2>How to play</h2>
+				<p>Click the plant to grow your monstera, raise your score, and unlock stronger watering power.</p>
+				<p>Watch the soil meter. When it is ready, you can choose whether to push the plant further.</p>
+			</section>
+			<section class="devlog_card">
+				<h2>Updates</h2>
+				<ul>
+					<li>Fresh visual redesign with softer motion and cleaner panels.</li>
+					<li>New normal growth levels from stage 0 to stage 9.</li>
+					<li>Expanded horror path with four dedicated stages.</li>
+					<li>Water multiplier now shows drops in a row instead of swapped icons.</li>
+				</ul>
+			</section>
 		</div>
-		<div class="dev_h1">What's new:</div>
-		<ul>
-			<li>Added the 8th level <i>(new texture and multiplier boost)</i></li>
-			<li>Added the shop</li>
-			<li style="color: red;" title="not yet">Beta test of the coin system</li>
-		</ul>
 		<div class="btn" id="close_devlog">close</div>
 	</div>
 	<div class="isolation" id="isolation">
@@ -106,7 +114,7 @@
 		</div>
 	</div>
 	<div class="wrap" id="wrap">
-		<div class="forSoil wow bounceIn" id="soil">0%</div>
+		<div class="forSoil" id="soil">0%</div>
 		<div class="forScore">
 			<div class="section section1" id="label">
 				Grow your <b>Monstera</b>
@@ -119,7 +127,7 @@
 		<div class="forPlay">
 			<div class="canvas">
 				<div class="block inkMe" ink-color="#57dbeb" id="block">
-					<img src="/assets/images/0.png" alt="zero" id="plant">
+					<img src="/assets/images/0a.png" alt="monstera stage 0" id="plant">
 					<div class="spider" id="spider"></div>
 				</div>
 			</div>
@@ -131,7 +139,6 @@
 			</div>
 	</div>
 	<script src="/vendor/jquery-1.12.js"></script>
-	<script src="/vendor/wow.min.js"></script>
 	<script src="/vendor/ink.js"></script>
 	<script type="module" src="src/scripts/main.js"></script>
 </body>
